@@ -48,6 +48,20 @@ Def.ActorProxy {
 You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag and drop your modfile into Stepmania, delete the `default.xml` in the `template` folder, and make minor edits until your file looks 1:1. That's really about it. If you need help with porting, feel free to send a message in the OutFox Discord and you'll be sure to get the help you need.
 
 ---
+
+## Known Issues
+- Extra players are not supported for SM5 (halted for OutFox)
+- Shaders are not supported entirely (unfinished implementation)
+- File breaks for SM5 (ironic but i really need to go to bed)
+
+---
+
+## To-Do
+- Implement shaders for NotITG
+- Merge files and use game-specific variables rather than game-specific files
+- Thorough testing for both games
+
+---
 ## Thank You to These People
 [XeroOl](https://github.com/xerool) - Original Mirin Template  
 [ArcticFqx](https://github.com/arcticfqx) - Recursive XML trick for NotITG  
