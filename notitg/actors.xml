@@ -1,0 +1,14 @@
+<ActorFrame>
+    <children>
+        <Layer Condition="actorgen.Cond(1)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(2)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(3)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(4)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(5)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(6)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(7)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(8)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(9)"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+        <Layer Condition="actorgen.Cond(10)" Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%function(a) actorgen.Init(a) end" RegisterOverlayMessageCommand="%function(a) actorgen.RegisterOverlay(a) end" />
+    </children>
+</ActorFrame>

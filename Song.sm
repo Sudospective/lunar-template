@@ -1,6 +1,6 @@
-#TITLE:Mirin Template;
-#SUBTITLE:;
-#ARTIST:???;
+#TITLE:Lunar Template;
+#SUBTITLE:based on Mirin Template by XeroOl;
+#ARTIST:Sudospective;
 #TITLETRANSLIT:;
 #SUBTITLETRANSLIT:;
 #ARTISTTRANSLIT:;
@@ -19,9 +19,7 @@
 #STOPS:;
 #TIMESIGNATURES:0.000=4=4;
 #BGCHANGES:;
-
-//The majority of simfile scripts and visual effects are stored here.
-#FGCHANGES:0.000=template/main.xml=1.000=0=0=1=====,
+#FGCHANGES:0.000=template=1.000=0=0=1=====,
 ;
 
 #KEYSOUNDS:;
@@ -29,7 +27,7 @@
 //---------------dance-single - ----------------
 #NOTES:
      dance-single:
-     :
+     XeroOl:
      Challenge:
      1:
      0.615,0.484,0.000,1.000,0.168:
