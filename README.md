@@ -57,9 +57,9 @@ You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag
 ---
 
 ## To-Do
-- Implement shaders for NotITG
-- Merge files and use game-specific variables rather than game-specific files
-- Thorough testing for both games
+1. Thorough testing for both games
+2. Merge files and use game-specific variables rather than game-specific files
+3. Implement shaders for NotITG
 
 ---
 ## Thank You to These People
