@@ -1,0 +1,7 @@
+hiddenregions
+log
+mirror
+rand
+simpleregions
+spellcards
+swap

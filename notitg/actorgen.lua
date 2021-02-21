@@ -32,7 +32,7 @@ local ceil = math.ceil
 local getn = table.getn
 local lower = string.lower
 
-local typespec = xero.loadfileM("notitg/typespec.lua")
+local typespec = xero.loadscript("notitg/typespec.lua")
 
 local function GetDepth(t)
     local depth = ceil(log(getn(t)))

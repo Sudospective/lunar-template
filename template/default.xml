@@ -1,7 +1,7 @@
 <ActorFrame
 	Condition = "(function()
 		_G.xero = {}
-		function xero.loadfileM(path)
+		function xero.loadscript(path)
 			-- load the song directory
 			local songdir = GAMESTATE:GetCurrentSong():GetSongDir()
 			-- attempt to load lua file
@@ -37,22 +37,20 @@
 			end
 		end
 
-		xero.loadfileM('notitg/std.lua')
-		xero.loadfileM('notitg/actorgen.lua')
+		xero.loadscript('notitg/std.lua')
+		xero.loadscript('notitg/actorgen.lua')
 		
 		return true
 
 	end)()"
 	InitCommand = "%function(self)
 		xero.foreground = self
-		
 		xero.ActorList = Def.ActorFrame {
-			xero.loadfileM('notitg/template.lua'),
-			xero.loadfileM('notitg/ease.lua'),
-			xero.loadfileM('notitg/plugins.lua'),
-			xero.loadfileM('lua/mods.lua'),
+			xero.loadscript('notitg/template.lua'),
+			xero.loadscript('notitg/ease.lua'),
+			xero.loadscript('notitg/plugins.lua'),
+			xero.loadscript('lua/mods.lua'),
 		}
-
 		self:sleep(9e9)
 	end"
 ><children>
