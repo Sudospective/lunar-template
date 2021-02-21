@@ -1,8 +1,6 @@
 xero()
 return Def.ActorFrame {
     LoadCommand = function(self)
-            
-        --loadfileM('scripts/mirin_portable.lua')
 
         -- judgment / combo proxies
         for pn = 1, 2 do
@@ -16,7 +14,6 @@ return Def.ActorFrame {
         end
 
         -- your code goes here here:
-        ease {0, 1, outExpo, 100, 'invert'}
         
     end,
 
