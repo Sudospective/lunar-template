@@ -53,6 +53,80 @@ You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag
 
 ---
 
+## What about collabs?
+You can supercharge them. Take the Mirin template's quick modwriting and powerful node system to the next level with Lunar's elegant actor syntax and extreme portability.
+Some recommended setups for different use cases:
+
+---
+Just Mods
+```lua
+-- in mods.lua
+xero()
+return Def.ActorFrame {
+    LoadCommand = function(self)
+    ... -- Mods
+        loadscript('lua/sudo.lua') -- Sudo
+        loadscript('lua/xero.lua') -- Xero
+    end,
+    ... -- Actors
+}
+-- in sudo.lua
+xero()
+ease {6, 4, spike, -200, 'tiny'}
+... -- Mods
+```
+Mods and Actors
+```lua
+-- in mods.lua
+xero()
+return Def.ActorFrame {
+    LoadCommand = function(self)
+        ... -- Mods
+    end,
+    loadscript('lua/sudo.lua'), -- Sudo
+    loadscript('lua/xero.lua'), -- Xero
+    ... -- Actors
+}
+-- in sudo.lua
+xero()
+return Def.ActorFrame {
+    Name = 'Sudo' -- optional but useful
+    LoadCommand = function(self)
+        ease {6, 4, spike, -200, 'tiny'}
+        ... -- Mods
+    end,
+    Def.Quad { Name = 'TheBoy' }
+    ... -- Actors
+}
+```
+Mods, Actors, and Assets
+```lua
+-- in mods.lua
+xero()
+return Def.ActorFrame {
+    LoadCommand = function(self)
+        ... -- Mods
+    end,
+    loadscript('lua/sudo/mods.lua'), -- Sudo
+    loadscript('lua/xero/mods.lua'), -- Xero
+    ... -- Actors
+}
+-- in sudo.lua
+xero()
+return Def.ActorFrame {
+    Name = 'Sudo'
+    LoadCommand = function(self)
+        ease {6, 4, spike, -200, 'tiny'}
+        ... -- Mods
+    end,
+    Def.Sprite { Name = 'Beb', Texture = 'lua/sudo/warmfren.png' }
+    ... -- Actors
+}
+```
+The Lunar Template is designed to fit and streamline your style.
+
+---
+
 ## Known Issues
 - Extra players are not supported for SM5 (halted for OutFox)
 - AFTs are not perfectly portable (needs significant effort to fix)
