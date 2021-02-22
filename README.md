@@ -55,6 +55,7 @@ You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag
 
 ## Known Issues
 - Extra players are not supported for SM5 (halted for OutFox)
+- AFTs are not perfectly portable (needs significant effort to fix)
 - Shaders are not supported entirely (unfinished implementation)
 
 ---
@@ -63,6 +64,7 @@ You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag
 1. Thorough testing for both games
 2. Merge files and use game-specific variables rather than game-specific files
 3. Implement shaders for NotITG
+4. Look into possible ways to port AFTs 1:1
 
 ---
 ## Thank You to These People
