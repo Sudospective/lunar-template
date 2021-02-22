@@ -70,6 +70,7 @@ return Def.ActorFrame {
     end,
     ... -- Actors
 }
+
 -- in sudo.lua
 xero()
 ease {6, 4, spike, -200, 'tiny'}
@@ -87,6 +88,7 @@ return Def.ActorFrame {
     loadscript('lua/xero.lua'), -- Xero
     ... -- Actors
 }
+
 -- in sudo.lua
 xero()
 return Def.ActorFrame {
@@ -111,6 +113,7 @@ return Def.ActorFrame {
     loadscript('lua/xero/mods.lua'), -- Xero
     ... -- Actors
 }
+
 -- in sudo.lua
 xero()
 return Def.ActorFrame {
