@@ -56,7 +56,6 @@ You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag
 ## Known Issues
 - Extra players are not supported for SM5 (halted for OutFox)
 - Shaders are not supported entirely (unfinished implementation)
-- File breaks for SM5 (ironic but i really need to go to bed)
 
 ---
 
