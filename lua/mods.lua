@@ -13,8 +13,6 @@ return Def.ActorFrame {
             P[pn]:hidden(1)
         end
         -- funy arow wigles go here
-
-
         
     end,
 
