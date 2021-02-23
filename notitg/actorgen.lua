@@ -121,10 +121,11 @@ function actorgen.File()
 
     if template.File then
         local rel = string.find(template.File, "^/") and "../" or ""
+        print(rel..template.File)
         return rel .. template.File
     end
 
-    return typespec[template.Type].File
+    return typespec[template.Type].File or nil
 end
 
 local function patchFunctionChaining(actor)
@@ -190,7 +191,7 @@ function actorgen:Init()
 
         for k, v in pairs(template) do
             if string.len(k) > 8 and string.sub(k, -7, -1) == "Command" then
-                print(k)
+                --print(k)
                 local cmd_name = string.sub(k, 1, -8)
                 if self:hascommand(cmd_name) then self:removecommand(cmd_name) end
                 self:addcommand(cmd_name, v)
@@ -199,6 +200,10 @@ function actorgen:Init()
         end
     else
         self:SetName("_")
+    end
+
+    if template.Texture then
+        self:Load(GAMESTATE:GetCurrentSong():GetMusicPath() .. "/../" .. template.Texture)
     end
 
     if s.l[s.cd] >= nodesPerAF or s.width <= s.i then

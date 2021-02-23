@@ -39,6 +39,7 @@ end
 return Def.ActorFrame {
 	InitCommand = function(self)
 		xero.foreground = self
+		xero.loadscript('template/sharedvars.lua')
 		self:sleep(9e9)
 	end,
 	xero.loadscript('outfox/std.lua'),

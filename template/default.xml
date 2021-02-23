@@ -36,7 +36,6 @@
 				end
 			end
 		end
-
 		xero.loadscript('notitg/std.lua')
 		xero.loadscript('notitg/actorgen.lua')
 		
@@ -45,6 +44,7 @@
 	end)()"
 	InitCommand = "%function(self)
 		xero.foreground = self
+		xero.loadscript('template/sharedvars.lua')
 		xero.ActorList = Def.ActorFrame {
 			xero.loadscript('notitg/template.lua'),
 			xero.loadscript('notitg/ease.lua'),

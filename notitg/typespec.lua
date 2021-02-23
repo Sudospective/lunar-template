@@ -54,11 +54,12 @@ local typespec = {
     Quad = { Type = "Quad" },
     Sprite = { Type = "Sprite" },
     Text = { Type = "BitmapText" },
-    ActorFrameTexture = { Type="ActorFrameTexture" },
+    ActorFrameTexture = { Type = "ActorFrameTexture" },
     AFT = { Type = "ActorFrameTexture" },
     Polygon = { Type = "Polygon" },
     Poly = { Type = "Polygon" },
     ActorMultiVertex = { Type = "Polygon" },
+    AMV = { Type = "Polygon" },
     ActorSound = { Type = "ActorSound" },
     Sound = { Type = "ActorSound" },
     Audio = { Type = "ActorSound" },
@@ -66,7 +67,7 @@ local typespec = {
     Aux = { Type = "Actor" },
     Proxy = { Type = "ActorProxy" },
     ActorProxy = { Type = "ActorProxy" },
-    ActorFrame = { }
+    ActorFrame = { },
 }
 
 local function runcommand(actor, template, kind)
