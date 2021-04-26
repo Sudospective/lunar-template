@@ -80,7 +80,7 @@ You can supercharge them. Take the Mirin template's quick modwriting and powerfu
 Some recommended setups for different use cases:
 
 ---
-Just Mods
+####Just Mods
 ```lua
 -- in mods.lua
 xero()
@@ -98,7 +98,7 @@ xero()
 ease {6, 4, spike, -200, 'tiny'}
 ... -- Mods
 ```
-Mods and Actors
+####Mods and Actors
 ```lua
 -- in mods.lua
 xero()
@@ -123,7 +123,7 @@ return Def.ActorFrame {
     ... -- Actors
 }
 ```
-Mods, Actors, and Assets
+####Mods, Actors, and Assets
 ```lua
 -- in mods.lua
 xero()
