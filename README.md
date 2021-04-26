@@ -46,6 +46,28 @@ Def.ActorProxy {
 }
 ```
 
+#### Recursive Actors
+```lua
+xero() -- outside the main actorframe
+-- make an empty actorframe called myActor
+local recursive_quads = Def.ActorFrame { Name = "myActor" }
+-- for-loop and add 10 quads
+for i = 1, 10 do
+    t[#t + 1] = Def.Quad { Name = "Quad"..i }
+end
+return Def.ActorFrame {
+    LoadCommand = function(self)
+    -- ...
+    end,
+    -- add it as a child to main actorframe
+    recursive_quads,
+    -- other actors
+    Def.ActorProxy { Name = 'PP[1]' },
+    Def.ActorProxy { Name = 'PP[2]' },
+    -- ...
+}
+```
+
 ---
 
 ## So, how do I port it?
@@ -65,8 +87,8 @@ xero()
 return Def.ActorFrame {
     LoadCommand = function(self)
     ... -- Mods
-        loadscript('lua/sudo.lua') -- Sudo
-        loadscript('lua/xero.lua') -- Xero
+        loadfile('lua/sudo.lua')() -- Sudo
+        loadfile('lua/xero.lua')() -- Xero
     end,
     ... -- Actors
 }
@@ -84,8 +106,8 @@ return Def.ActorFrame {
     LoadCommand = function(self)
         ... -- Mods
     end,
-    loadscript('lua/sudo.lua'), -- Sudo
-    loadscript('lua/xero.lua'), -- Xero
+    loadfile('lua/sudo.lua')(), -- Sudo
+    loadfile('lua/xero.lua')(), -- Xero
     ... -- Actors
 }
 
@@ -109,8 +131,8 @@ return Def.ActorFrame {
     LoadCommand = function(self)
         ... -- Mods
     end,
-    loadscript('lua/sudo/mods.lua'), -- Sudo
-    loadscript('lua/xero/mods.lua'), -- Xero
+    loadfile('lua/sudo/mods.lua')(), -- Sudo
+    loadfile('lua/xero/mods.lua')(), -- Xero
     ... -- Actors
 }
 
@@ -138,13 +160,12 @@ The Lunar Template is designed to fit and streamline your style.
 ---
 
 ## To-Do
-1. Thorough testing for both games
-2. Merge files and use game-specific variables rather than game-specific files
-3. Implement shaders for NotITG
-4. Look into possible ways to port AFTs 1:1
+1. Merge files and use game-specific variables rather than game-specific files
+1. Implement shaders for NotITG
+1. Look into possible ways to port AFTs 1:1
 
 ---
-## Thank You to These People
+## Huge Warm Hugs to These People
 [XeroOl](https://github.com/xerool) - Original Mirin Template  
 [ArcticFqx](https://github.com/arcticfqx) - Recursive XML trick for NotITG  
 [HeySora](https://github.com/heysora) - Encouragement and direction  
