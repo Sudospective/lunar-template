@@ -134,15 +134,15 @@ LoadCommand = function(self)
                 {'MoveZ', 0.01},
                 {'NoteSkewX', 0.01},
                 {'NoteSkewY', 0.01},
-                {'Dark', 1},
-                {'Reverse', 1},
+                {'Dark', 0.01},
+                {'Reverse', 0.01},
             } do
                 local modname = mod[1]..col
                 definemod {
                     string.lower(mod[1])..col - 1,
                     function(n, pn)
                         if POptions[pn] and POptions[pn][modname] then
-                            POptions[pn][modname](POptions[pn], n * mod[2])
+                            POptions[pn][modname](POptions[pn], n * mod[2], 9e9)
                         end
                     end,
                     defer = true
