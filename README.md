@@ -53,18 +53,18 @@ xero() -- outside the main actorframe
 local recursive_quads = Def.ActorFrame { Name = "myActor" }
 -- for-loop and add 10 quads
 for i = 1, 10 do
-    t[#t + 1] = Def.Quad { Name = "Quad"..i }
+    t[#t + 1] = Def.Quad { Name = "Quad" .. i }
 end
 return Def.ActorFrame {
     LoadCommand = function(self)
-    -- ...
+    ... -- Mods
     end,
     -- add it as a child to main actorframe
     recursive_quads,
     -- other actors
     Def.ActorProxy { Name = 'PP[1]' },
     Def.ActorProxy { Name = 'PP[2]' },
-    -- ...
+    ... -- Actor
 }
 ```
 
