@@ -1,7 +1,7 @@
 <ActorFrame
 	Condition = "(function()
 		_G.xero = {}
-		assert(loadfile('notitg/std.lua'))()
+		assert(loadfile('template/std.lua'))()
 		assert(loadfile('notitg/actorgen.lua'))()
 		return true
 	end)()"
@@ -9,9 +9,9 @@
 		xero.foreground = self
 		assert(loadfile('template/sharedvars.lua'))()
 		xero.ActorList = Def.ActorFrame {
-			assert(loadfile('notitg/template.lua'))(),
-			assert(loadfile('notitg/ease.lua'))(),
-			assert(loadfile('notitg/plugins.lua'))(),
+			assert(loadfile('template/template.lua'))(),
+			assert(loadfile('template/ease.lua'))(),
+			assert(loadfile('template/plugins.lua'))(),
 			assert(loadfile('lua/mods.lua'))(),
 		}
 		self:sleep(9e9)

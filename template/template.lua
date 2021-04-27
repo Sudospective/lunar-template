@@ -1,20 +1,22 @@
-local POptions = {
-	GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
-	GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song'),
-}
-local function ApplyModifiers(str, pn)
-	if pn then
-		POptions[pn]:FromString(str)
-	else
-		POptions[1]:FromString(str)
-		POptions[2]:FromString(str)
+if not FUCK_EXE then
+	local POptions = {
+		GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
+		GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song'),
+	}
+	local function ApplyModifiers(str, pn)
+		if pn then
+			POptions[pn]:FromString(str)
+		else
+			POptions[1]:FromString(str)
+			POptions[2]:FromString(str)
+		end
 	end
 end
 --template.xml
 
 xero()
 
-max_pn = 2 -- default: `8`
+if FUCK_EXE then max_pn = 8 else max_pn = 2 end -- default: `8`
 local debug_print_applymodifier_input = false -- default: `false`
 local debug_print_mod_targets = false -- default: `false`
 
@@ -63,16 +65,29 @@ e = 'end'
 plr = {1, 2}
 
 function sprite(self)
-	self:Center()
+	if FUCK_EXE then
+		self:basezoomx(sw / dw)
+		self:basezoomy(-sh / dh)
+		self:x(scx)
+		self:y(scy)
+	else
+		self:Center()
+	end
 end
 
 function aft(self)
 	self:SetWidth(sw)
 	self:SetHeight(sh)
-	self:EnableDepthBuffer(true)
-	self:EnableAlphaBuffer(true)
 	self:EnableFloat(false)
-	self:EnablePreserveTexture(false)
+	if FUCK_EXE	then
+		self:EnableDepthBuffer(false)
+		self:EnableAlphaBuffer(false)
+		self:EnablePreserveTexture(true)
+	else
+		self:EnableDepthBuffer(true)
+		self:EnableAlphaBuffer(true)
+		self:EnablePreserveTexture(false)
+	end
 	self:Create()
 end
 
@@ -689,13 +704,23 @@ function begin_update_command(self)
 		'ScoreP1', 'ScoreP2',
 		'LifeP1', 'LifeP2',
 	} do
-		local child = SCREENMAN:GetTopScreen():GetChild(element)
-		if child then child:visible(false) end
+		if FUCK_EXE then
+			local child = SCREENMAN(element)
+			if child then child:hidden(1) end
+		else
+			local child = SCREENMAN:GetTopScreen():GetChild(element)
+			if child then child:visible(false) end
+		end
+
 	end
 	
 	P = {}
 	for pn = 1, max_pn do
-		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
+		if FUCK_EXE then
+			local player = SCREENMAN('PlayerP' .. pn)
+		else
+			local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
+		end
 		xero['P' .. pn] = player
 		P[pn] = player
 	end
@@ -732,7 +757,7 @@ node {
 	'zoomx', 'zoomy',
 	defer = true,
 }
-setdefault {100, 'zoom', 100, 'zoomx', 100, 'zoomy'}
+setdefault {100, 'zoom', 100, 'zoomx', 100, 'zoomy', 100, 'zoomz'}
 
 -- movex
 for _, a in ipairs {'x', 'y', 'z'} do
@@ -809,11 +834,19 @@ local active_funcs = perframe_data_structure(function(a, b)
 	return x * x * y < x * y * y
 end)
 
-ApplyModifiers('clearall,*0 0x,*-1 overhead')
+if FUCK_EXE then
+	GAMESTATE:ApplyModifiers('clearall,*0 0x,*-1 overhead')
+else
+	ApplyModifiers('clearall,*0 0x,*-1 overhead')
+end
 -- default eases
 
 local function apply_modifiers(str, pn)
-	ApplyModifiers(str, pn)
+	if FUCK_EXE then
+		GAMESTATE:ApplyModifiers(str, pn)
+	else
+		ApplyModifiers(str, pn)
+	end
 end
 
 if debug_print_applymodifier_input then
@@ -938,7 +971,7 @@ function update_command(self)
 	end
 	
 	for pn = 1, max_pn do
-		if P[pn] then
+		if P[pn] and (P[pn]:IsAwake() or not FUCK_EXE) then
 			mod_buffer = stringbuilder()
 			seen = seen + 1
 			for k in pairs(mods[pn]) do
@@ -968,7 +1001,7 @@ function update_command(self)
 	if debug_print_mod_targets then
 		if debug_print_mod_targets == true or debug_print_mod_targets < beat then
 			for pn = 1, max_pn do
-				if P[pn] then
+				if P[pn] and (P[pn]:IsAwake() or not FUCK_EXE) then
 					local outputs = {}
 					local i = 0
 					for k, v in pairs(targets[pn]) do

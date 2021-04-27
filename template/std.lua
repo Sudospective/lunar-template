@@ -1,4 +1,5 @@
 --std.xml
+
 local xero = setmetatable(xero, xero)
 xero.__index = _G
 
@@ -186,4 +187,8 @@ local stringbuilder_mt =  {
 function stringbuilder()
 	return setmetatable({}, stringbuilder_mt)
 end
-return Def.Actor {}
+if FUCK_EXE then
+	return true
+else
+	return Def.Actor {}
+end
