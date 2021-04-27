@@ -160,7 +160,6 @@ The Lunar Template is designed to fit and streamline your style.
 ---
 
 ## To-Do
-1. Merge files and use game-specific variables rather than game-specific files
 1. Implement shaders for NotITG
 1. Look into possible ways to port AFTs 1:1
 
