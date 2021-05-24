@@ -107,8 +107,14 @@ end
 
 function setupJudgeProxy(proxy, target, pn)
 	proxy:SetTarget(target)
-	proxy:xy(scx * (pn-.5), scy)
-	target:visible(false)
+	if FUCK_EXE then
+		proxy:xy(scx * (pn-.5), scy)
+		target:hidden(1)
+	else
+		proxy:x(scx * (pn-.5))
+		proxy:y(scy)
+		target:visible(false)
+	end
 	target:sleep(9e9)
 end
 
@@ -652,7 +658,7 @@ local function scan_named_actors()
 	local function sweep(actor, skip)
 		if actor.GetNumChildren then
 			for i = 0, actor:GetNumChildren() - 1 do
-				sweep(actor:GetChildAt(1 + (i)))
+				sweep(actor:GetChildAt(i + (FUCK_EXE and 0) or 1))
 			end
 		end
 		if skip then
@@ -704,11 +710,10 @@ function begin_update_command(self)
 		'ScoreP1', 'ScoreP2',
 		'LifeP1', 'LifeP2',
 	} do
+		local child = SCREENMAN:GetTopScreen():GetChild(element)
 		if FUCK_EXE then
-			local child = SCREENMAN(element)
 			if child then child:hidden(1) end
 		else
-			local child = SCREENMAN:GetTopScreen():GetChild(element)
 			if child then child:visible(false) end
 		end
 
@@ -716,11 +721,7 @@ function begin_update_command(self)
 	
 	P = {}
 	for pn = 1, max_pn do
-		if FUCK_EXE then
-			local player = SCREENMAN('PlayerP' .. pn)
-		else
-			local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
-		end
+		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
 		xero['P' .. pn] = player
 		P[pn] = player
 	end
