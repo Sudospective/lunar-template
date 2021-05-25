@@ -1,14 +1,15 @@
 _G.xero = {}
+xero.songdir = GAMESTATE:GetCurrentSong():GetSongDir()
 return Def.ActorFrame {
 	InitCommand = function(self)
 		xero.foreground = self
-		assert(loadfile('template/sharedvars.lua'))()
+		assert(loadfile(xero.songdir..'template/sharedvars.lua'))()
 		self:sleep(9e9)
 	end,
-	assert(loadfile('template/std.lua'))(),
-	assert(loadfile('template/template.lua'))(),
-	assert(loadfile('template/ease.lua'))(),
-	assert(loadfile('template/plugins.lua'))(),
-	assert(loadfile('outfox/modport.lua'))(),
-	assert(loadfile('lua/mods.lua'))(),
+	assert(loadfile(xero.songdir..'template/std.lua'))(),
+	assert(loadfile(xero.songdir..'template/template.lua'))(),
+	assert(loadfile(xero.songdir..'template/ease.lua'))(),
+	assert(loadfile(xero.songdir..'template/plugins.lua'))(),
+	assert(loadfile(xero.songdir..'outfox/modport.lua'))(),
+	assert(loadfile(xero.songdir..'lua/mods.lua'))(),
 }

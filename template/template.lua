@@ -1,9 +1,11 @@
+local POptions = {}
+local ApplyModifiers
 if not FUCK_EXE then
-	local POptions = {
+	POptions = {
 		GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
 		GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song'),
 	}
-	local function ApplyModifiers(str, pn)
+	ApplyModifiers = function(str, pn)
 		if pn then
 			POptions[pn]:FromString(str)
 		else
@@ -658,7 +660,7 @@ local function scan_named_actors()
 	local function sweep(actor, skip)
 		if actor.GetNumChildren then
 			for i = 0, actor:GetNumChildren() - 1 do
-				sweep(actor:GetChildAt(i + (FUCK_EXE and 0) or 1))
+				sweep(actor:GetChildAt(i + ((FUCK_EXE and 0) or 1)))
 			end
 		end
 		if skip then
@@ -972,7 +974,7 @@ function update_command(self)
 	end
 	
 	for pn = 1, max_pn do
-		if P[pn] and (P[pn]:IsAwake() or not FUCK_EXE) then
+		if P[pn] and (not FUCK_EXE or P[pn]:IsAwake()) then
 			mod_buffer = stringbuilder()
 			seen = seen + 1
 			for k in pairs(mods[pn]) do
