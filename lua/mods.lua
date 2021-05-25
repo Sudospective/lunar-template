@@ -12,8 +12,9 @@ return Def.ActorFrame {
             PP[pn]:SetTarget(P[pn])
             P[pn]:hidden(1)
         end
+
         -- funy arow wigles go here
-        
+
     end,
 
     -- funy scren budies go here

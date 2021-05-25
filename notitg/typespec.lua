@@ -2,33 +2,26 @@ local generic, runcommand
 local typespec = {
     BitmapText = {
         Type = "BitmapText",
-        File = "_eurostile normal",
+        Font = "_eurostile normal",
         Init = function( actor, template )
             generic.Init( actor, template )
             actor:settext( template.Text or "" )
         end
     },
-    -- im not worried about it yet -Sudo
-    --[[
     Shader = {
-        File = "shader.xml",
+        File = "../notitg/shader.xml",
         Init = function( actor, template )
-            local dummy = actor:GetChild("shader")
-            actor:hidden(1)
-            dummy:hidden(1)
+            local dummy = actor:GetChildAt(0)
             local shader = dummy:GetShader()
-            if template.Frag or template.Vert then
-                local vert = template.Vert or stitch "lua.geno.vert"
-                local frag = template.Frag or stitch "lua.geno.frag"
-                shader:compile(vert, frag)
-            end
             local init = template.InitCommand
             if type(init) == "function" then
                 init( shader, template )
             end
+			actor:SetName('')
+			dummy:SetName(template.Name)
         end,
         FileFrag = function( template )
-            local frag = template.FileFrag
+            local frag = template.Frag
             if frag then
                 print("RETURNING FRAG","../" .. frag)
                 return "../" .. frag
@@ -36,7 +29,7 @@ local typespec = {
             return 'nop.frag'
         end,
         FileVert = function( template )
-            local vert = template.FileVert
+            local vert = template.Vert
             if vert then
                 print("RETURNING VERT","../" .. vert)
                 return "../" .. vert
@@ -46,11 +39,10 @@ local typespec = {
         On = function(actor, template)
             local on = template.OnCommand
             if type(on) == "function" then
-                on( actor:GetChild("shader"):GetShader(), template )
+                on( actor:GetChildAt(0):GetShader(), template )
             end
         end
     },
-    --]]
     Quad = { Type = "Quad" },
     Sprite = { Type = "Sprite" },
     Text = { Type = "BitmapText" },

@@ -1,0 +1,5 @@
+<Layer Type="ActorFrame">
+<children>
+    <Layer Type="Sprite" Name="shaderdummy" Frag="@actorgen.Meta('FileFrag')" Vert="@actorgen.Meta('FileVert')" />
+</children>
+</Layer>
