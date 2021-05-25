@@ -1,4 +1,4 @@
-// Glitchline shader created by Drazil
+// Glitchline shader credited to Nayoto and Drazil
 uniform float amount;
 uniform vec2 shift;
 
