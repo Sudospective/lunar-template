@@ -155,12 +155,10 @@ The Lunar Template is designed to fit and streamline your style.
 ## Known Issues
 - Extra players are not supported for SM5 (halted for OutFox)
 - AFTs are not perfectly portable (needs significant effort to fix)
-- Shaders are not supported entirely (unfinished implementation)
 
 ---
 
 ## To-Do
-1. Implement shaders for NotITG
 1. Look into possible ways to port AFTs 1:1
 
 ---
