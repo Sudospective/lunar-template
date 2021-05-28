@@ -8,33 +8,33 @@ Please use the original if you plan to port using the Mirin Template.
 xero()
 
 return Def.Actor {
-LoadCommand = function(self)
-    bw, bh = 640, 480
-    sm_scaleW, sm_scaleH = sw / bw, sh / bh
-    sm_scaleR = sm_scaleW / sm_scaleH
-    sm_fix = (FUCK_EXE and 0) or 1
-    
-    function CorrectZDist(actor)
-        if not FUCK_EXE and actor and actor.GetNumChildren then
-            actor:fardistz(1000 * sm_scaleW)
-            for an = 0, actor:GetNumChildren() - 1 do
-                CorrectZDist(actor:GetChildAt(an))
+    LoadCommand = function(self)
+        bw, bh = 640, 480
+        sm_scaleW, sm_scaleH = sw / bw, sh / bh
+        sm_scaleR = sm_scaleW / sm_scaleH
+        sm_fix = (FUCK_EXE and 0) or 1
+
+        function CorrectZDist(actor)
+            if not FUCK_EXE and actor and actor.GetNumChildren then
+                actor:fardistz(1000 * sm_scaleW)
+                for an = 0, actor:GetNumChildren() - 1 do
+                    CorrectZDist(actor:GetChildAt(an))
+                end
             end
         end
-    end
-    function CorrectFOV(actor, fov)
-        if not FUCK_EXE and actor and actor.GetNumChildren then
-            actor:fov(fov)
-            for an = 0, actor:GetNumChildren() - 1 do
-                CorrectFOV(actor:GetChildAt(an), fov)
+        function CorrectFOV(actor, fov)
+            if not FUCK_EXE and actor and actor.GetNumChildren then
+                actor:fov(fov)
+                for an = 0, actor:GetNumChildren() - 1 do
+                    CorrectFOV(actor:GetChildAt(an), fov)
+                end
             end
         end
-    end
-    
-    alias
-    {'confusionzoffset', 'confusionoffset'}	
-    {'hidenoteflashes', 'hidenoteflash'}
-    
+
+        alias
+        {'confusionzoffset', 'confusionoffset'}
+        {'hidenoteflashes', 'hidenoteflash'}
+
         local PN = {}
         for pn = 1, 2 do
             if P[pn]:GetChild('NoteField'):GetNumWrapperStates() == 0 then
@@ -43,21 +43,25 @@ LoadCommand = function(self)
             PN[pn] = P[pn]:GetChild('NoteField'):GetWrapperState(1)
             PN[pn]:rotafterzoom(false)
         end
-    
+
         local POptions = {
             GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
             GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song')
         }
-        
+
         alias
         {'holdstealth', 'stealthholds'}
+        {'halgun', 'hideholdjudgments'}
         {'centered2', 'centeredpath'}
+        {'reversetype', 'unboundedreverse'}
         {'arrowpath', 'notepath'}
+        {'arrowpathdrawsize', 'notepathdrawsize'}
+        {'arrowpathdrawsizeback', 'notepathdrawsizeback'}
         {'arrowpath0', 'notepath1'}
         {'arrowpath1', 'notepath2'}
         {'arrowpath2', 'notepath3'}
         {'arrowpath3', 'notepath4'}
-        
+
         for _, tween in ipairs {
             {'x', 1},
             {'y', 1},
@@ -67,19 +71,30 @@ LoadCommand = function(self)
             {'rotationz', 1},
             {'skewx', 0.01},
             {'skewy', 0.01},
-            {'zoomx', 0.01},
-            {'zoomy', 0.01},
+            {'zoomx', 0.01, 'zoom', 0.01},
+            {'zoomy', 0.01, 'zoom', 0.01},
             {'zoomz', 0.01 * sm_scaleR},
         } do
-            definemod {
-                tween[1],
-                function(n, pn)
-                    if PN[pn] and PN[pn][tween[1]] then PN[pn][tween[1]](PN[pn], n * tween[2]) end
-                end,
-                defer = true
-            }
+            local name, mul, other, other_mul = tween[1], tween[2], tween[3], tween[4]
+            if other then
+                definemod {
+                    name, other,
+                    function(m, n, pn)
+                        if PN[pn] and PN[pn][name] then PN[pn][name](PN[pn], (m * mul) * (n * other_mul)) end
+                    end,
+                    defer = true
+                }
+            else
+                definemod {
+                    name,
+                    function(n, pn)
+                        if PN[pn] and PN[pn][name] then PN[pn][name](PN[pn], n * mul) end
+                    end,
+                    defer = true
+                }
+            end
         end
-    
+
         definemod
         {
             'tiny',
@@ -138,15 +153,27 @@ LoadCommand = function(self)
                 {'Reverse', 0.01},
             } do
                 local modname = mod[1]..col
-                definemod {
-                    string.lower(mod[1])..col - 1,
-                    function(n, pn)
-                        if POptions[pn] and POptions[pn][modname] then
-                            POptions[pn][modname](POptions[pn], n * mod[2], 9e9)
-                        end
-                    end,
-                    defer = true
-                }
+                if string.sub(mod[1], 1, 4) == 'Move' then
+                    definemod {
+                        string.lower(mod[1])..(col - 1), string.lower(mod[1]),
+                        function(m, n, pn)
+                            if POptions[pn] and POptions[pn][modname] then
+                                POptions[pn][modname](POptions[pn], (m + n) * mod[2], 9e9)
+                            end
+                        end,
+                        defer = true
+                    }
+                else
+                    definemod {
+                        string.lower(mod[1])..(col - 1),
+                        function(n, pn)
+                            if POptions[pn] and POptions[pn][modname] then
+                                POptions[pn][modname](POptions[pn], n * mod[2], 9e9)
+                            end
+                        end,
+                        defer = true
+                    }
+                end
             end
         end
     end
