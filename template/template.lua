@@ -78,14 +78,17 @@ function sprite(self)
 end
 
 function aft(self)
-	self:SetWidth(sw)
-	self:SetHeight(sh)
-	self:EnableFloat(false)
 	if FUCK_EXE	then
+		self:SetWidth(dw)
+		self:SetHeight(dh)
+		self:EnableFloat(false)
 		self:EnableDepthBuffer(false)
 		self:EnableAlphaBuffer(false)
 		self:EnablePreserveTexture(true)
 	else
+		self:SetWidth(sw)
+		self:SetHeight(sh)
+		self:EnableFloat(false)
 		self:EnableDepthBuffer(true)
 		self:EnableAlphaBuffer(true)
 		self:EnablePreserveTexture(false)
