@@ -351,7 +351,7 @@ function func(self, depth, name)
 		screen_error('curly braces expected', depth, name)
 		return func
 	end
-	
+
 	if self.mode or self.m then
 		if type(self[2]) == number then
 			self[2] = self[2] - self[1]
@@ -360,7 +360,7 @@ function func(self, depth, name)
 			self.persist = self.persist - self[1]
 		end
 	end
-	
+
 	local can_use_poptions = false
 	local a, b, c, d, e, f = self[1], self[2], self[3], self[4], self[5], self[6]
 	-- function ease, type 3
@@ -565,14 +565,14 @@ function compile_nodes()
 				table.insert(last[v], nd)
 			end
 		end
-		
+
 		local function escapestr(s)
 			return '\'' .. string.gsub(s, '[\\\']', '\\%1') .. '\''
 		end
 		local function list(code, i, sep)
 			if i ~= 1 then code(sep) end
 		end
-		
+
 		local code = stringbuilder()
 		local function emit_inputs()
 			for i, mod in ipairs(inputs) do
@@ -605,7 +605,7 @@ function compile_nodes()
 				code
 			'end\n'
 		'end\n'
-		
+
 		local compiled = assert(loadstring(code:build()))()
 		nd[6] = compiled(outputs, parents, mods, fn)
 		if not terminator then
@@ -676,14 +676,14 @@ local function scan_named_actors()
 			end
 		end
 	end
-	
+
 	code'return function(list, actors)\n'
 		sweep(foreground, true)
 	code'end'
-	
+
 	local load_actors = xero(assert(loadstring(code:build())))()
 	load_actors(list, actors)
-	
+
 	local function clear_metatables(tab)
 		setmetatable(tab, nil)
 		for _, obj in pairs(tab) do
@@ -693,11 +693,11 @@ local function scan_named_actors()
 		end
 	end
 	clear_metatables(actors)
-	
+
 	for name, actor in pairs(actors) do
 		xero[name] = actor
 	end
-	
+
 end
 
 function on_command(self)
@@ -706,7 +706,7 @@ function on_command(self)
 end
 
 function begin_update_command(self)
-	
+
 	for _, element in ipairs {
 		'Overlay', 'Underlay',
 		'ScoreP1', 'ScoreP2',
@@ -720,16 +720,16 @@ function begin_update_command(self)
 		end
 
 	end
-	
+
 	P = {}
 	for pn = 1, max_pn do
 		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
 		xero['P' .. pn] = player
 		P[pn] = player
 	end
-	
+
 	foreground:playcommand('Load')
-	
+
 	stable_sort(eases, function(a, b) return a[1] < b[1] end)
 	stable_sort(funcs, function(a, b)
 		if a[1] == b[1] then
@@ -745,36 +745,40 @@ function begin_update_command(self)
 	end)
 	resolve_aliases()
 	compile_nodes()
-	
+
 	self:luaeffect('Update')
 end
 
--- zoom
-aux 'zoom'
-node {
-	'zoom', 'zoomx', 'zoomy',
-	function(zoom, x, y)
-		local m = zoom * 0.01
-		return m * x, m * y
-	end,
-	'zoomx', 'zoomy',
-	defer = true,
-}
-setdefault {100, 'zoom', 100, 'zoomx', 100, 'zoomy', 100, 'zoomz'}
-
--- movex
-for _, a in ipairs {'x', 'y', 'z'} do
-	aux {'move' .. a}
+-- make zoom and move nodes NotITG-only - kino
+if FUCK_EXE then
+	-- zoom
+	aux 'zoom'
 	node {
-		'move' .. a,
-		function(a)
-			return a, a, a, a, a, a, a, a
+		'zoom', 'zoomx', 'zoomy',
+		function(zoom, x, y)
+			local m = zoom * 0.01
+			return m * x, m * y
 		end,
-		'move'..a..'0', 'move'..a..'1', 'move'..a..'2', 'move'..a..'3',
-		'move'..a..'4', 'move'..a..'5', 'move'..a..'6', 'move'..a..'7',
+		'zoomx', 'zoomy',
 		defer = true,
 	}
+
+	-- movex
+	for _, a in ipairs {'x', 'y', 'z'} do
+		aux {'move' .. a}
+		node {
+			'move' .. a,
+			function(a)
+				return a, a, a, a, a, a, a, a
+			end,
+			'move'..a..'0', 'move'..a..'1', 'move'..a..'2', 'move'..a..'3',
+			'move'..a..'4', 'move'..a..'5', 'move'..a..'6', 'move'..a..'7',
+			defer = true,
+		}
+	end
 end
+
+setdefault {100, 'zoom', 100, 'zoomx', 100, 'zoomy', 100, 'zoomz'}
 
 -- xmod
 aux 'xmod' 'cmod'
@@ -890,11 +894,11 @@ end
 
 local oldbeat = 0
 function update_command(self)
-	
+
 	local beat = GAMESTATE:GetSongBeat()
 	if beat <= oldbeat then return end
 	oldbeat = beat
-	
+
 	while eases_index <= eases.n and eases[eases_index][1] < beat do
 		local e = eases[eases_index]
 		local plr = e.plr
@@ -922,7 +926,7 @@ function update_command(self)
 		push(active_eases, e)
 		eases_index = eases_index + 1
 	end
-	
+
 	local active_eases_index = 1
 	while active_eases_index <= active_eases.n do
 		local e = active_eases[active_eases_index]
@@ -944,7 +948,7 @@ function update_command(self)
 			active_eases.n = active_eases.n - 1
 		end
 	end
-	
+
 	while funcs_index <= funcs.n and funcs[funcs_index][1] < beat do
 		local e = funcs[funcs_index]
 		if not e[2] then
@@ -954,7 +958,7 @@ function update_command(self)
 		end
 		funcs_index = funcs_index + 1
 	end
-	
+
 	while true do
 		local e = active_funcs:next()
 		if not e then break end
@@ -964,7 +968,7 @@ function update_command(self)
 		else
 			if e.mods then
 				for pn = 1, max_pn do
-					for mod, _ in e.mods[pn] do
+					for mod, _ in pairs(e.mods[pn]) do
 						mods[pn][mod] = mods[pn][mod] + 0
 					end
 				end
@@ -972,7 +976,7 @@ function update_command(self)
 			active_funcs:remove()
 		end
 	end
-	
+
 	for pn = 1, max_pn do
 		if P[pn] and (not FUCK_EXE or P[pn]:IsAwake()) then
 			mod_buffer = stringbuilder()
@@ -1000,7 +1004,7 @@ function update_command(self)
 			end
 		end
 	end
-	
+
 	if debug_print_mod_targets then
 		if debug_print_mod_targets == true or debug_print_mod_targets < beat then
 			for pn = 1, max_pn do
