@@ -62,6 +62,8 @@ return Def.Actor {
         {'arrowpath2', 'notepath3'}
         {'arrowpath3', 'notepath4'}
 
+        setdefault {100, 'tinyusesminicalc'}
+
         for _, tween in ipairs {
             {'x', 1},
             {'y', 1},
@@ -152,13 +154,13 @@ return Def.Actor {
                 {'Dark', 0.01},
                 {'Reverse', 0.01},
             } do
-                local modname = mod[1]..col
+                local modname, mul = mod[1]..col, mod[2]
                 if string.sub(mod[1], 1, 4) == 'Move' then
                     definemod {
                         string.lower(mod[1])..(col - 1), string.lower(mod[1]),
                         function(m, n, pn)
                             if POptions[pn] and POptions[pn][modname] then
-                                POptions[pn][modname](POptions[pn], (m + n) * mod[2], 9e9)
+                                POptions[pn][modname](POptions[pn], (m + n) * mul, 9e9)
                             end
                         end,
                         defer = true
@@ -168,7 +170,7 @@ return Def.Actor {
                         string.lower(mod[1])..(col - 1),
                         function(n, pn)
                             if POptions[pn] and POptions[pn][modname] then
-                                POptions[pn][modname](POptions[pn], n * mod[2], 9e9)
+                                POptions[pn][modname](POptions[pn], n * mul, 9e9)
                             end
                         end,
                         defer = true
