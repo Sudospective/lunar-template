@@ -1,7 +1,7 @@
 local generic, runcommand
 local typespec = {
     BitmapText = {
-        File = "bitmaptext.xml",
+        File = "../notitg/bitmaptext.xml",
         Init = function( actor, template )
 			local init = template.InitCommand
 			if type(init) == "function" then
