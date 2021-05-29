@@ -18,10 +18,10 @@ return Def.ActorFrame {
     end,
 
     -- funy scren budies go here
+    Def.ActorProxy { Name = 'PP[1]' },
+    Def.ActorProxy { Name = 'PP[2]' },
     Def.ActorProxy { Name = 'PJ[1]' },
     Def.ActorProxy { Name = 'PJ[2]' },
     Def.ActorProxy { Name = 'PC[1]' },
     Def.ActorProxy { Name = 'PC[2]' },
-    Def.ActorProxy { Name = 'PP[1]' },
-    Def.ActorProxy { Name = 'PP[2]' },
 }
