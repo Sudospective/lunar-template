@@ -1,6 +1,7 @@
 <ActorFrame
 	Condition = "(function()
 		_G.xero = {}
+		xero.songdir = GAMESTATE:GetCurrentSong():GetSongDir()
 		xero.loadscript = function(path) return assert(loadfile(path))() end
 		xero.loadscript('template/std.lua')
 		xero.loadscript('notitg/actorgen.lua')
