@@ -11,7 +11,7 @@ The Mirin Template is an extremely powerful template that has an fast growing fa
 
 The [Lunar Template](https://github.com/sudospective/lunar-template) tries its best to fix these issues.
 
-Built off the Mirin Template, the Lunar Template is an ongoing effort to make porting modfiles between NotITG and its Stepmania sister much less stressful and time-consuming. It uses the same syntax for modding, but uses a more SM-friendly approach to Actors.
+Built off the Mirin Template, the Lunar Template is an ongoing effort to make porting modfiles between NotITG and its OutFox sister much less stressful and time-consuming. It uses the same syntax for modding, but uses a more OutFox friendly approach to Actors.
 
 (Full documentation for mods can be found [here](https://xerool.github.io/notitg-mirin))
 
