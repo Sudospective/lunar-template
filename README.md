@@ -167,3 +167,4 @@ The Lunar Template is designed to fit and streamline your style.
 [ArcticFqx](https://github.com/arcticfqx) - Recursive XML trick for NotITG  
 [HeySora](https://github.com/heysora) - Encouragement and direction  
 [Mr.ThatKid](https://github.com/mrthatkid) - Motivation and support  
+[Kinoseidon](https://github.com/kinoseidon) - Direct contributor!  
