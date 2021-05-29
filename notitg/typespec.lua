@@ -1,12 +1,30 @@
 local generic, runcommand
 local typespec = {
     BitmapText = {
-        Type = "BitmapText",
-        Font = "_eurostile normal",
+        File = "bitmaptext.xml",
         Init = function( actor, template )
-            generic.Init( actor, template )
-            actor:settext( template.Text or "" )
-        end
+			local init = template.InitCommand
+			if type(init) == "function" then
+				init( actor, template )
+			end
+        end,
+		FileText = function( template )
+			return template.Text or ""
+		end,
+		FileFont = function( template )
+			local font = template.Font
+			if font then
+				print("RETURNING FONT", font)
+				return font
+			end
+			return "eurostile _normal"
+		end,
+		On = function( actor, template )
+			local on = template.OnCommand
+			if type(on) == "function" then
+				on( actor, template )
+			end
+		end
     },
     Shader = {
         File = "../notitg/shader.xml",
