@@ -37,6 +37,10 @@ return Def.Actor {
 
         local PN = {}
         for pn = 1, 2 do
+            P[pn]:fardistz(1000 * sm_scaleW)
+            P[pn]:zoomz(sm_scaleW)
+            P[pn]:rotafterzoom(false)
+
             if P[pn]:GetChild('NoteField'):GetNumWrapperStates() == 0 then
                 P[pn]:GetChild('NoteField'):AddWrapperState()
             end
@@ -55,8 +59,6 @@ return Def.Actor {
         {'centered2', 'centeredpath'}
         {'reversetype', 'unboundedreverse'}
         {'arrowpath', 'notepath'}
-        {'arrowpathdrawsize', 'notepathdrawsize'}
-        {'arrowpathdrawsizeback', 'notepathdrawsizeback'}
         {'arrowpath0', 'notepath1'}
         {'arrowpath1', 'notepath2'}
         {'arrowpath2', 'notepath3'}
@@ -75,7 +77,7 @@ return Def.Actor {
             {'skewy', 0.01},
             {'zoomx', 0.01, 'zoom', 0.01},
             {'zoomy', 0.01, 'zoom', 0.01},
-            {'zoomz', 0.01 * sm_scaleR},
+            {'zoomz', 0.01},
         } do
             local name, mul, other, other_mul = tween[1], tween[2], tween[3], tween[4]
             if other then
@@ -140,6 +142,29 @@ return Def.Actor {
             defer = true
         }
         ]]--
+
+        do
+            local frontratio = 410 / THEME:GetMetric('Player', 'DrawDistanceBeforeTargetsPixels')
+            local backratio = -114 / THEME:GetMetric('Player', 'DrawDistanceAfterTargetsPixels')
+
+            for _, v in ipairs{
+                {'drawsize', frontratio},
+                {'drawsizeback', backratio},
+                {'arrowpathdrawsize', frontratio, 'notepathdrawsize'},
+                {'arrowpathdrawsizeback', backratio, 'notepathdrawsizeback'}
+            } do
+                local name, distratio, ali = v[1], v[2], v[3]
+                local function scaledist(n)
+                    return (n + 100) * distratio - 100
+                end
+
+                if ali then
+                    definemod {name, scaledist, ali, defer = true}
+                else
+                    node {name, scaledist, name, defer = true}
+                end
+            end
+        end
 
         for col = 1, 4 do
             for _, mod in ipairs {
