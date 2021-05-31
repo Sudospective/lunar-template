@@ -215,7 +215,7 @@ else
 	function inOutQuad(x) return t.inoutquad(x) end
 	function inCubic(x) return t.incubic(x) end
 	function outCubic(x) return t.outcubic(x) end
-	function inOutCubic(x) return inoutcubic(x) end
+	function inOutCubic(x) return t.inoutcubic(x) end
 	function inQuart(x) return t.inquart(x) end
 	function outQuart(x) return t.outquart(x) end
 	function inOutQuart(x) return t.inoutquart(x) end
