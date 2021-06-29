@@ -71,7 +71,7 @@ return Def.ActorFrame {
 ---
 
 ## So, how do I port it?
-You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag and drop your modfile into Stepmania, delete the `default.xml` in the `template` folder, and make minor edits until your file looks 1:1. That's really about it. If you need help with porting, feel free to send a message in the OutFox Discord and you'll be sure to get the help you need.
+~~You load the `mirin-porting.lua` script from Tiny-Foxes in your `mods.lua`, drag and drop your modfile into Stepmania, delete the `default.xml` in the `template` folder, and make minor edits until your file looks 1:1. That's really about it. If you need help with porting, feel free to send a message in the OutFox Discord and you'll be sure to get the help you need.~~ Most of the porting is done for you, thanks to the `modport.lua` script. Some things, like AFTs and tween scaling, may need some additional polish, but the bulk of it all should be done from here. In fact, you could even make separate actor files for NotITG and OutFox, if you really want porting to be virtually seamless.
 
 ---
 
