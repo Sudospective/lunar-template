@@ -1,6 +1,6 @@
 _G.xero = {}
 xero.songdir = GAMESTATE:GetCurrentSong():GetSongDir()
-xero.loadscript = function(self) return assert(loadfile(xero.songdir..path))() end
+xero.loadscript = function(path) return assert(loadfile(xero.songdir..path))() end
 return Def.ActorFrame {
 	InitCommand = function(self)
 		xero.foreground = self
