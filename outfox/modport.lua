@@ -2,6 +2,10 @@
 ----
 This is an edit of mirin-porting.lua to better suit the Lunar Template.
 Please use the original if you plan to port using the Mirin Template.
+
+Special Thanks:
+	Mr. ThatKid - For helping immensely with modname differentiation and mod scaling
+	XeroOl - For showing optimizations with column incrementation and mod definitions
 ----
 ]]--
 
@@ -63,6 +67,9 @@ return Def.Actor {
         {'arrowpath1', 'notepath2'}
         {'arrowpath2', 'notepath3'}
         {'arrowpath3', 'notepath4'}
+		{'modtimer', 'modtimersong'}
+		{'longholds', 'extendholds'}
+		{'holdstealth', 'stealthholds'}
 
         setdefault {100, 'tinyusesminicalc'}
 
@@ -171,6 +178,7 @@ return Def.Actor {
                 {'ConfusionXOffset', 0.01},
                 {'ConfusionYOffset', 0.01},
                 {'ConfusionZOffset', 0.01},
+				{'ConfusionOffset', 0.01}, -- Just in case?
                 {'MoveX', 0.01},
                 {'MoveY', 0.01},
                 {'MoveZ', 0.01},
@@ -178,6 +186,7 @@ return Def.Actor {
                 {'NoteSkewY', 0.01},
                 {'Dark', 0.01},
                 {'Reverse', 0.01},
+				{'Tiny', 0.01},
             } do
                 local modname, mul = mod[1]..col, mod[2]
                 if string.sub(mod[1], 1, 4) == 'Move' then
@@ -190,7 +199,20 @@ return Def.Actor {
                         end,
                         defer = true
                     }
-                else
+                elseif string.sub(mod[1], 1, 4) == 'Tiny' then
+                    definemod {
+                        string.lower(mod[1])..(col - 1), string.lower(mod[1]),
+                        function(m, n, pn)
+                            if POptions[pn] and POptions[pn][modname..'X'] then
+                                POptions[pn][modname..'X'](POptions[pn], (m + n) * mul, 9e9)
+                            end
+                            if POptions[pn] and POptions[pn][modname..'Y'] then
+                                POptions[pn][modname..'Y'](POptions[pn], (m + n) * mul, 9e9)
+                            end
+                        end,
+                        defer = true
+                    }
+				else
                     definemod {
                         string.lower(mod[1])..(col - 1),
                         function(n, pn)

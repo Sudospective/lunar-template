@@ -70,8 +70,7 @@ function sprite(self)
 	if FUCK_EXE then
 		self:basezoomx(sw / dw)
 		self:basezoomy(-sh / dh)
-		self:x(scx)
-		self:y(scy)
+		self:xy(scx, scy)
 	else
 		self:Center()
 	end
@@ -142,7 +141,6 @@ end
 
 -- mod aliases, or ease vars
 local aliases = {}
-local reverse_aliases = {}
 
 -- alias a mod
 function alias(self, depth, name)
@@ -154,30 +152,15 @@ function alias(self, depth, name)
 	end
 	local a, b = self[1], self[2]
 	if type(a) ~= 'string' then
-		screen_error('unexpected argument 1', depth, name)
+		screen_error('argument 1 should be a string', depth, name)
 		return alias
 	end
 	if type(b) ~= 'string' then
-		screen_error('unexpected argument 2', depth, name)
+		screen_error('argument 2 should be a string', depth, name)
 		return alias
 	end
 	a, b = string.lower(a), string.lower(b)
-	-- TODO make alias logic clearer
-	local collection = {a}
-	while aliases[b] do
-		if reverse_aliases[b] then
-			for _, item in ipairs(reverse_aliases[b]) do
-				table.insert(collection, item)
-			end
-			reverse_aliases[b] = nil
-		end
-		b = aliases[b]
-	end
-	reverse_aliases[b] = reverse_aliases[b] or {}
-	for _, name in ipairs(collection) do
-		aliases[name] = b
-		table.insert(reverse_aliases[b], name)
-	end
+	aliases[a] = b
 	return alias
 end
 
@@ -189,6 +172,11 @@ end
 -- eases are loaded after the template, so this needs to be declared early
 local function instant()
 	return 1
+end
+
+local touched_mods = {}
+for pn = 1, max_pn do
+	touched_mods[pn] = {}
 end
 
 -- the table of default mod values
@@ -217,8 +205,11 @@ function setdefault(self, depth, name)
 			return setdefault
 		end
 		default_mods[self[i + 1]] = self[i]
-		add ({0, 0, instant, 0, self[i + 1]}, depth, name)
+		for pn = 1, max_pn do
+			touched_mods[pn][self[i + 1]] = true
+		end
 	end
+	return setdefault
 end
 
 -- the previously set value of a mod
@@ -250,7 +241,7 @@ function ease(self, depth, name)
 		screen_error('len / end missing', depth, name)
 		return ease
 	end
-	if type(self[3]) ~= 'function' then
+	if type(self[3]) ~= 'function' and (not getmetatable(self[3]) or not getmetatable(self[3]).__call) then
 		screen_error('invalid ease function', depth, name)
 		return ease
 	end
@@ -295,6 +286,13 @@ function ease(self, depth, name)
 	-- update prev_mods table
 	if not self.transient then
 		for _, pn in ipairs(type(plr) == 'table' and plr or {plr}) do
+			if self.reset then
+				for mod, percent in pairs(prev_mods[pn]) do
+					if not self.exclude[mod] then
+						prev_mods[pn][mod] = default_mods[mod]
+					end
+				end
+			end
 			for n = 5, self.n, 2 do
 				if self.relative then
 					prev_mods[pn][self[n]] = prev_mods[pn][self[n]] + self[n - 1]
@@ -338,10 +336,14 @@ function reset(self, depth, name)
 	self[3] = self[3] or instant
 	self.reset = true
 	self.exclude = self.exclude or {}
+	if type(self.exclude) == 'string' then
+		self.exclude = {self.exclude}
+	end
 	for _, v in ipairs(self.exclude) do
 		self.exclude[v] = true
 	end
 	ease(self, depth, name)
+	return reset
 end
 
 -- the table of scheduled functions and perframes
@@ -356,11 +358,19 @@ function func(self, depth, name)
 	end
 
 	if self.mode or self.m then
-		if type(self[2]) == number then
+		if type(self[2]) == 'number' then
 			self[2] = self[2] - self[1]
 		end
 		if type(self.persist) == 'number' then
 			self.persist = self.persist - self[1]
+		end
+	end
+
+	-- new string syntax, like `func {0, 1, outExpo, scx*0.5, scx, 'P1:x'}`
+	for i = 1, #self do
+		if type(self[i]) == 'string' then
+			self[i] = xero(loadstring('return function(p) ' .. self[i].. '(p) end'))()
+			break
 		end
 	end
 
@@ -460,14 +470,12 @@ function node(self, depth, name)
 	end
 	local i = 1
 	local inputs = {}
-	local reverse_in = {}
 	while type(self[i]) == 'string' do
 		table.insert(inputs, self[i])
-		add({0, 0, instant, 0, self[i]}, depth, name)
 		i = i + 1
 	end
 	if i == 1 then
-		screen_error('inputs to node expected', depth, name)
+		screen_error('the first argument needs to be the mod name', depth, name)
 	end
 	local fn = self[i]
 	if type(fn) ~= 'function' then
@@ -475,7 +483,10 @@ function node(self, depth, name)
 	end
 	i = i + 1
 	local out = {}
-	while type(self[i]) == 'string' do
+	while self[i] do
+		if type(self[i]) ~= 'string' then
+			screen_error('unexpected argument '..tostring(self[i])..', expected a string', depth, name)
+		end
 		table.insert(out, self[i])
 		i = i + 1
 	end
@@ -501,9 +512,38 @@ function definemod(self, depth, name)
 end
 
 local mods = {}
+local targets = {}
 mod_buffer = stringbuilder()
 
-function compile_nodes()
+function touch_mod(mod, pn)
+	-- run metatables
+	if pn then
+		mods[pn][mod] = mods[pn][mod]
+	else
+		for pn = 1, max_pn do
+			touch_mod(mod, pn)
+		end
+	end
+end
+
+function touch_all_mods(pn)
+	for mod in pairs(default_mods) do
+		touch_mod(mod)
+	end
+	if pn then
+		for mod in pairs(targets[pn]) do
+			touch_mod(mod, pn)
+		end
+	else
+		for pn = 1, 8 do
+			for mod in pairs(targets[pn]) do
+				touch_mod(mod, pn)
+			end
+		end
+	end
+end
+
+local function compile_nodes()
 	local terminators = {}
 	for _, nd in ipairs(nodes) do
 		for _, mod in ipairs(nd[2]) do
@@ -749,6 +789,19 @@ function begin_update_command(self)
 	resolve_aliases()
 	compile_nodes()
 
+	-- disable all the table inserters during runtime
+	ease = function() screen_error('cannot be run after beat 0', 1, 'ease') end
+	add = function() screen_error('cannot be run after beat 0', 1, 'add') end
+	func = function() screen_error('cannot be run after beat 0', 1, 'func') end
+	set = function() screen_error('cannot be run after beat 0', 1, 'set') end
+	get = function() screen_error('cannot be run after beat 0', 1, 'get') end
+	setdefault = function() screen_error('cannot be run after beat 0', 1, 'setdefault') end
+	reset = function() screen_error('cannot be run after beat 0', 1, 'reset') end
+	node = function() screen_error('cannot be run after beat 0', 1, 'node') end
+	definemod = function() screen_error('cannot be run after beat 0', 1, 'definemod') end
+	aux = function() screen_error('cannot be run after beat 0', 1, 'aux') end
+	alias = function() screen_error('cannot be run after beat 0', 1, 'alias') end
+
 	self:luaeffect('Update')
 end
 
@@ -779,6 +832,7 @@ if FUCK_EXE then
 			defer = true,
 		}
 	end
+	setdefault {400, 'grain'}
 end
 
 setdefault {100, 'zoom', 100, 'zoomx', 100, 'zoomy', 100, 'zoomz'}
@@ -798,7 +852,8 @@ node {
 }
 setdefault {1, 'xmod'}
 
-local targets = {}
+-- defined earlier
+local targets = targets
 for pn = 1, max_pn do
 	targets[pn] = setmetatable({}, modtable_mt)
 end
@@ -812,6 +867,8 @@ local mods = mods
 for pn = 1, max_pn do
 	mods[pn] = setmetatable({}, mods_mt[pn])
 end
+
+local last_seen_awake = {}
 
 local poptions = {}
 local poptions_mt = {}
@@ -899,7 +956,7 @@ local oldbeat = 0
 function update_command(self)
 
 	local beat = GAMESTATE:GetSongBeat()
-	if beat <= oldbeat then return end
+	--if beat <= oldbeat then return end
 	oldbeat = beat
 
 	while eases_index <= eases.n and eases[eases_index][1] < beat do
@@ -972,7 +1029,7 @@ function update_command(self)
 			if e.mods then
 				for pn = 1, max_pn do
 					for mod, _ in pairs(e.mods[pn]) do
-						mods[pn][mod] = mods[pn][mod] + 0
+						touch_mod(mod, pn)
 					end
 				end
 			end
@@ -982,6 +1039,13 @@ function update_command(self)
 
 	for pn = 1, max_pn do
 		if P[pn] and (not FUCK_EXE or P[pn]:IsAwake()) then
+			if not last_seen_awake[pn] then
+				last_seen_awake[pn] = true
+				for mod, percent in pairs(touched_mods[pn]) do
+					touch_mod(mod, pn)
+					touched_mods[pn][mod] = nil
+				end
+			end
 			mod_buffer = stringbuilder()
 			seen = seen + 1
 			for k in pairs(mods[pn]) do
@@ -1004,6 +1068,12 @@ function update_command(self)
 			end
 			if mod_buffer[1] then
 				apply_modifiers(mod_buffer:build(','), pn)
+			end
+		else
+			last_seen_awake[pn] = false
+			for mod, percent in pairs(mods[pn]) do
+				mods[pn][mod] = nil
+				touched_mods[pn][mod] = true
 			end
 		end
 	end

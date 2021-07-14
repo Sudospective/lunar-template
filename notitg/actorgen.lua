@@ -1,5 +1,5 @@
 -- If you edit template.xml, reflect the change here
-local nodesPerAF = 50
+local nodesPerAF = 100
 local templatepath = "../notitg/actors.xml"
 
 -- End of config
@@ -10,6 +10,8 @@ local templatepath = "../notitg/actors.xml"
 
     Part of the nitg-theme project: https://github.com/ArcticFqx/nitg-theme/
 ]]
+
+-- geno deez nuts haha lmao gotem - jaez
 
 actorgen = { 
     Actors = {}, 
@@ -23,7 +25,7 @@ actorgen = {
 local log = nodesPerAF == 10
             and math.log10
             or  function(n)
-                    return math.log(n)/math.log(nodesPerAF) 
+                    return math.log(n)/math.log(nodesPerAF)
                 end
 
 local stack = {}
@@ -36,6 +38,7 @@ local typespec = assert(loadfile("notitg/typespec.lua"))()
 
 local function GetDepth(t)
     local depth = ceil(log(getn(t)))
+	--local depth = getn(t)
     return depth > 0 and depth or 1
 end
 
@@ -63,7 +66,8 @@ function smeta:NewLayer(t)
         cd = 1, -- current depth
         i = 0, -- current template index
         l = {}, -- current index of node
-        a = {} -- actorgen.Actors clone
+        a = {}, -- actorgen.Actors clone
+		ni = 0, -- current node index
     }
 end
 
@@ -72,12 +76,20 @@ smeta.__index = smeta
 -- This runs first
 function actorgen.Cond(index, type)
     local s = stack:Top()
-    s.l[s.cd] = index
+    s.l[s.cd] = index or s.ni
     
     if s.width <= s.i then
         return false
     end
+
+	if not index then s.ni = s.ni + 1 end
     return true
+end
+
+-- just a small check
+function actorgen.HasNext(index, type)
+    local s = stack:Top()
+    return s.width > (index or s.ni)
 end
 
 function actorgen.Type()

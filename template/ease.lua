@@ -1,37 +1,55 @@
 --ease.xml
 xero()
-
--- make a self-filling table based on a generator function
-local function cache(func)
-	return setmetatable({}, {
-		__index = function(self, k)
-			self[k] = func(k)
-			return self[k]
-		end
-	})
-end
-
--- make a function cache its results from previous calls
-local function fncache(func)
-	local cache = {}
-	return function(arg)
-		cache[arg] = cache[arg] or func(arg)
-		return cache[arg]
-	end
-end
-
+	
 local sqrt = math.sqrt
 local sin = math.sin
+local asin = math.asin
 local cos = math.cos
 local pow = math.pow
 local exp = math.exp
 local pi = math.pi
 local abs = math.abs
 
-function flip(fn)
-	return function(x) return 1 - fn(x) end
+flip = setmetatable({}, {
+	__call = function(self, fn)
+		self[fn] = self[fn] or function(x) return 1 - fn(x) end
+		return self[fn]
+	end
+})
+
+function with1param(fn, defaultparam1)
+	local function params(param1)
+		return function(x)
+			return fn(x, param1)
+		end
+	end
+	local default = params(defaultparam1)
+	return setmetatable({
+		params = params,
+		param = params,
+	}, {
+		__call = function(self, x)
+			return default(x)
+		end
+	})
 end
-flip = fncache(flip)
+
+function with2params(fn, defaultparam1, defaultparam2)
+	local function params(param1, param2)
+		return function(x)
+			return fn(x, param1, param2)
+		end
+	end
+	local default = params(defaultparam1, defaultparam2)
+	return setmetatable({
+		params = params,
+		param = params,
+	}, {
+		__call = function(self, x)
+			return default(x)
+		end
+	})
+end
 
 function bounce(t) return 4 * t * (1 - t) end
 function tri(t) return 1 - abs(2 * t - 1) end
@@ -43,40 +61,39 @@ function pulse(t) return t < .5 and tap(t * 2) or -pop(t * 2 - 1) end
 function spike(t) return exp(-10 * abs(2 * t - 1)) end
 function inverse(t) return t * t * (1 - t) * (1 - t) / (0.5 - t) end
 
-popElastic = cache(function(damp)
-	return cache(function(count)
-		return function(t)
-			return (1000 ^ -(t ^ damp) - 0.001) * sin(count * pi * t)
-		end
-	end)
-end)
-tapElastic = cache(function(damp)
-	return cache(function(count)
-		return function(t)
-			return (1000 ^ -((1 - t) ^ damp) - 0.001) * sin(count * pi * (1 - t))
-		end
-	end)
-end)
-pulseElastic = cache(function(damp)
-	return cache(function(count)
-		local tap_e = tapElastic[damp][count]
-		local pop_e = popElastic[damp][count]
-		return function(t)
-			return t > .5 and -pop_e(t * 2 - 1) or tap_e(t * 2)
-		end
-	end)
-end)
+local function popElasticInternal(t, damp, count)
+	return (1000 ^ -(t ^ damp) - 0.001) * sin(count * pi * t)
+end
 
-impulse = cache(function(damp)
-	return function(t)
-		t = t ^ damp
-		return t * (1000 ^ -t - 0.001) * 18.6
+local function tapElasticInternal(t, damp, count)
+	return (1000 ^ -((1 - t) ^ damp) - 0.001) * sin(count * pi * (1 - t))
+end
+
+local function pulseElasticInternal(t, damp, count)
+	if t < .5 then
+		return tapElasticInternal(t * 2, damp, count)
+	else
+		return -popElasticInternal(t * 2 - 1, damp, count)
 	end
-end)
+end
+
+popElastic = with2params(popElasticInternal, 1.4, 6)
+tapElastic = with2params(tapElasticInternal, 1.4, 6)
+pulseElastic = with2params(pulseElasticInternal, 1.4, 6)
+
+impulse = with1param(function(t, damp)
+	t = t ^ damp
+	return t * (1000 ^ -t - 0.001) * 18.6
+end, 0.9)
 
 function instant() return 1 end
+
 if FUCK_EXE then
+
 	function linear(t) return t end
+	function inSine(x) return 1 - cos(x * (pi * 0.5)) end
+	function outSine(x) return sin(x * (pi * 0.5)) end
+	function inOutSine(x) return 0.5 - 0.5 * cos(x * pi) end
 	function inQuad(t) return t * t end
 	function outQuad(t) return -t * (t - 2) end
 	function inOutQuad(t)
@@ -118,13 +135,13 @@ if FUCK_EXE then
 		end
 	end
 	function inExpo(t) return 1000 ^ (t - 1) - 0.001 end
-	function outExpo(t) return 0.999 - 1000 ^ -t end
+	function outExpo(t) return 1.001 - 1000 ^ -t end
 	function inOutExpo(t)
 		t = t * 2
 		if t < 1 then
 			return 0.5 * 1000 ^ (t - 1) - 0.0005
 		else
-			return 0.9995 - 0.5 * 1000 ^ (1 - t)
+			return 1.0005 - 0.5 * 1000 ^ (1 - t)
 		end
 	end
 	function inCirc(t) return 1 - sqrt(1 - t * t) end
@@ -138,38 +155,7 @@ if FUCK_EXE then
 			return 0.5 + 0.5 * sqrt(1 - t * t)
 		end
 	end
-
-	function inElastic(t)
-		t = t - 1
-		return -(pow(2, 10 * t) * sin((t - 0.075) * (2 * pi) / 0.3))
-	end
-	function outElastic(t)
-		return pow(2, -10 * t) * sin((t - 0.075) * (2 * pi) / 0.3) + 1
-	end
-	function inOutElastic(t)
-		t = t * 2 - 1
-		if t < 0 then
-			return -0.5 * pow(2, 10 * t) * sin((t - 0.1125) * 2 * pi / 0.45)
-		else
-			return pow(2, -10 * t) * sin((t - 0.1125) * 2 * pi / 0.45) * 0.5 + 1
-		end
-	end
-
-	function inBack(t) return t * t * (2.70158 * t - 1.70158) end
-	function outBack(t)
-		t = t - 1
-		return (t * t * (2.70158 * t + 1.70158)) + 1
-	end
-	function inOutBack(t)
-		t = t * 2
-		if t < 1 then
-			return 0.5 * (t * t * (3.5864016 * t - 2.5864016))
-		else
-			t = t - 2
-			return 0.5 * (t * t * (3.5864016 * t + 2.5864016) + 2)
-		end
-	end
-
+	function inBounce(t) return 1 - outBounce(1 - t) end
 	function outBounce(t)
 		if t < 1 / 2.75 then
 			return 7.5625 * t * t
@@ -184,7 +170,6 @@ if FUCK_EXE then
 			return 7.5625 * t * t + 0.984375
 		end
 	end
-	function inBounce(t) return 1 - outBounce(1 - t) end
 	function inOutBounce(t)
 		if t < 0.5 then
 			return inBounce(t * 2) * 0.5
@@ -193,19 +178,36 @@ if FUCK_EXE then
 		end
 	end
 
-	function inSine(x)
-		return 1 - cos(x * (pi * 0.5))
+	function outElasticInternal(t, a, p)
+		return a * pow(2, -10 * t) * sin((t - p / (2 * pi) * asin(1/a)) * 2 * pi / p) + 1
 	end
+	local function inElasticInternal(t, a, p)
+		return 1 - outElasticInternal(1 - t, a, p)
+	end
+	function inOutElasticInternal(t, a, p)
+		return t < 0.5
+			and  0.5 * inElasticInternal(t * 2, a, p)
+			or  0.5 + 0.5 * outElasticInternal(t * 2 - 1, a, p)
+	end
+	inElastic = with2params(inElasticInternal, 1, 0.3)
+	outElastic = with2params(outElasticInternal, 1, 0.3)
+	inOutElastic = with2params(inOutElasticInternal, 1, 0.3)
 
-	function outSine(x)
-		return sin(x * (pi * 0.5))
+	function inBackInternal(t, a) return t * t * (a * t + t - a) end
+	function outBackInternal(t, a) t = t - 1 return t * t * ((a + 1) * t + a) + 1 end
+	function inOutBackInternal(t, a)
+		return t < 0.5
+			and  0.5 * inBackInternal(t * 2, a)
+			or  0.5 + 0.5 * outBackInternal(t * 2 - 1, a)
 	end
+	inBack = with1param(inBackInternal, 1.70158)
+	outBack = with1param(outBackInternal, 1.70158)
+	inOutBack = with1param(inOutBackInternal, 1.70158)
 
-	function inOutSine(x)
-		return 0.5 - 0.5 * cos(x * pi)
-	end
 else
+
 	local t = Tweens
+
 	function linear(x) return t.linear(x) end
 	function inSine(x) return t.insine(x) end
 	function outSine(x) return t.outsine(x) end
@@ -228,15 +230,18 @@ else
 	function inCirc(x) return t.incircle(x) end
 	function outCirc(x) return t.inoutcircle(x) end
 	function inOutCirc(x) t.inoutcircle(x) end
-	function inBack(x) return t.inback(x) end
-	function outBack(x) return t.outback(x) end
-	function inOutBack(x) return t.inoutback(x) end
+	function inBounce(x) return t.inbounce(x) end
+	function outBounce(x) return t.outbounce(x) end
+	function inOutBounce(x) return t.inoutbounce(x) end
 	function inElastic(x) return t.inelastic(x) end
 	function outElastic(x) return t.outelastic(x) end
 	function inOutElastic(x) return t.inoutelastic(x) end
-	function outBounce(x) return t.outbounce(x) end
-	function inBounce(x) return t.inbounce(x) end
-	function inOutBounce(x) return t.inoutbounce(x) end
+	function inBack(x) return t.inback(x) end
+	function outBack(x) return t.outback(x) end
+	function inOutBack(x) return t.inoutback(x) end
+
+	-- TODO: Work with Kid to implement template's "internal" eases
+	-- using OutFox's faster tweens
 
 end
 return Def.Actor {}
