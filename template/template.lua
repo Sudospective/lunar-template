@@ -19,8 +19,10 @@ end
 xero()
 
 -- Normalize these alias please thank you :sudospUppies:
-Trace = lua.Trace
-Warn = lua.Warn
+if not FUCK_EXE then
+	Trace = lua.Trace
+	Warn = lua.Warn
+end
 
 if FUCK_EXE then max_pn = 8 else max_pn = 2 end -- default: `8`
 local debug_print_applymodifier_input = false -- default: `false`
