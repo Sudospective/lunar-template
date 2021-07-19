@@ -20,5 +20,4 @@ return Def.ActorFrame {
     Def.ActorProxy { Name = 'PJ[2]' },
     Def.ActorProxy { Name = 'PC[1]' },
     Def.ActorProxy { Name = 'PC[2]' },
-	af,
 }
