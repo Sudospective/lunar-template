@@ -1,6 +1,15 @@
 <ActorFrame>
     <children>
 		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
+		<Layer Condition="actorgen.Cond()"  Type="@actorgen.Type()" File="@actorgen.File()" InitCommand="%actorgen.Init" RegisterOverlayMessageCommand="%actorgen.RegisterOverlay" />
 		<Layer Condition="actorgen.HasNext()" File="actors.xml" />
     </children>
 </ActorFrame>

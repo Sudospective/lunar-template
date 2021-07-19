@@ -18,12 +18,6 @@ end
 
 xero()
 
--- Normalize these alias please thank you :sudospUppies:
-if not FUCK_EXE then
-	Trace = lua.Trace
-	Warn = lua.Warn
-end
-
 if FUCK_EXE then max_pn = 8 else max_pn = 2 end -- default: `8`
 local debug_print_applymodifier_input = false -- default: `false`
 local debug_print_mod_targets = false -- default: `false`
@@ -82,6 +76,11 @@ function sprite(self)
 	end
 end
 
+function spritepixel(self, scale)
+	sprite(self)
+	self:zoom(scale)
+end
+
 function aft(self)
 	if FUCK_EXE	then
 		self:SetWidth(dw)
@@ -111,8 +110,33 @@ function aftrecursive(self)
 	self:Create()
 end
 
+function aftpixel(self, scale)
+	self:SetWidth(sw / scale)
+	self:SetHeight(sh / scale)
+	self:EnableDepthBuffer(true)
+	self:EnableAlphaBuffer(false)
+	self:EnableFloat(false)
+	self:EnablePreserveTexture(true)
+	self:Create()
+end
+
 function aftsprite(aft, sprite)
 	sprite:SetTexture(aft:GetTexture())
+end
+
+function pivot(self)
+	if FUCK_EXE then
+		self:x2(scx)
+		self:y2(scy)
+	else
+		if self:GetNumWrapperStates() == 0 then self:AddWrapperState() end
+		local wrap = self:GetWrapperState(1)
+		wrap:Center()
+	end
+end
+
+function offset(self)
+	self:xy(-scx, -scy)
 end
 
 function setupJudgeProxy(proxy, target, pn)
@@ -482,16 +506,19 @@ function node(self, depth, name)
 	end
 	if i == 1 then
 		screen_error('the first argument needs to be the mod name', depth, name)
+		return node
 	end
 	local fn = self[i]
 	if type(fn) ~= 'function' then
 		screen_error('node function expected', depth, name)
+		return node
 	end
 	i = i + 1
 	local out = {}
 	while self[i] do
 		if type(self[i]) ~= 'string' then
 			screen_error('unexpected argument '..tostring(self[i])..', expected a string', depth, name)
+			return node
 		end
 		table.insert(out, self[i])
 		i = i + 1
@@ -749,68 +776,6 @@ local function scan_named_actors()
 
 end
 
-function on_command(self)
-	scan_named_actors()
-	self:queuecommand('BeginUpdate')
-end
-
-function begin_update_command(self)
-
-	for _, element in ipairs {
-		'Overlay', 'Underlay',
-		'ScoreP1', 'ScoreP2',
-		'LifeP1', 'LifeP2',
-	} do
-		local child = SCREENMAN:GetTopScreen():GetChild(element)
-		if FUCK_EXE then
-			if child then child:hidden(1) end
-		else
-			if child then child:visible(false) end
-		end
-
-	end
-
-	P = {}
-	for pn = 1, max_pn do
-		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
-		xero['P' .. pn] = player
-		P[pn] = player
-	end
-
-	foreground:playcommand('Load')
-
-	stable_sort(eases, function(a, b) return a[1] < b[1] end)
-	stable_sort(funcs, function(a, b)
-		if a[1] == b[1] then
-			local x, y = a.priority, b.priority
-			return x * x * y < x * y * y
-		else
-			return a[1] < b[1]
-		end
-	end)
-	stable_sort(nodes, function(a, b)
-		local x, y = a.priority, b.priority
-		return x * x * y < x * y * y
-	end)
-	resolve_aliases()
-	compile_nodes()
-
-	-- disable all the table inserters during runtime
-	ease = function() screen_error('cannot be run after beat 0', 1, 'ease') end
-	add = function() screen_error('cannot be run after beat 0', 1, 'add') end
-	func = function() screen_error('cannot be run after beat 0', 1, 'func') end
-	set = function() screen_error('cannot be run after beat 0', 1, 'set') end
-	get = function() screen_error('cannot be run after beat 0', 1, 'get') end
-	setdefault = function() screen_error('cannot be run after beat 0', 1, 'setdefault') end
-	reset = function() screen_error('cannot be run after beat 0', 1, 'reset') end
-	node = function() screen_error('cannot be run after beat 0', 1, 'node') end
-	definemod = function() screen_error('cannot be run after beat 0', 1, 'definemod') end
-	aux = function() screen_error('cannot be run after beat 0', 1, 'aux') end
-	alias = function() screen_error('cannot be run after beat 0', 1, 'alias') end
-
-	self:luaeffect('Update')
-end
-
 -- make zoom and move nodes NotITG-only - kino
 if FUCK_EXE then
 	-- zoom
@@ -958,11 +923,81 @@ function propagate(nd)
 	end
 end
 
+
+function on_command(self)
+	scan_named_actors()
+	self:queuecommand('BeginUpdate')
+end
+
+function begin_update_command(self)
+
+	for _, element in ipairs {
+		'Overlay', 'Underlay',
+		'ScoreP1', 'ScoreP2',
+		'LifeP1', 'LifeP2',
+	} do
+		local child = SCREENMAN:GetTopScreen():GetChild(element)
+		if child then
+			if FUCK_EXE then child:hidden(1) else child:visible(false) end
+		end
+
+	end
+
+	P = {}
+	for pn = 1, max_pn do
+		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
+		xero['P' .. pn] = player
+		P[pn] = player
+	end
+
+	foreground:playcommand('Load')
+
+	stable_sort(eases, function(a, b) return a[1] < b[1] end)
+	stable_sort(funcs, function(a, b)
+		if a[1] == b[1] then
+			local x, y = a.priority, b.priority
+			return x * x * y < x * y * y
+		else
+			return a[1] < b[1]
+		end
+	end)
+	stable_sort(nodes, function(a, b)
+		local x, y = a.priority, b.priority
+		return x * x * y < x * y * y
+	end)
+	resolve_aliases()
+	compile_nodes()
+
+	-- disable all the table inserters during runtime
+	ease = function() screen_error('cannot be run after beat 0', 1, 'ease') end
+	add = function() screen_error('cannot be run after beat 0', 1, 'add') end
+	func = function() screen_error('cannot be run after beat 0', 1, 'func') end
+	set = function() screen_error('cannot be run after beat 0', 1, 'set') end
+	get = function() screen_error('cannot be run after beat 0', 1, 'get') end
+	setdefault = function() screen_error('cannot be run after beat 0', 1, 'setdefault') end
+	reset = function() screen_error('cannot be run after beat 0', 1, 'reset') end
+	node = function() screen_error('cannot be run after beat 0', 1, 'node') end
+	definemod = function() screen_error('cannot be run after beat 0', 1, 'definemod') end
+	aux = function() screen_error('cannot be run after beat 0', 1, 'aux') end
+	alias = function() screen_error('cannot be run after beat 0', 1, 'alias') end
+
+	self:luaeffect('Update')
+	
+	-- For some God-forsaken reason, we get more performance not by removing work,
+	-- but adding more work at the beginning. This is probably the most confusing
+	-- thing I've encountered in modfile coding to date. ~Sudo
+	if not FUCK_EXE then
+		for mod in pairs(default_mods) do
+			touch_mod(mod)
+		end
+	end
+end
+
 local oldbeat = 0
 function update_command(self)
 
 	local beat = GAMESTATE:GetSongBeat()
-	--if beat <= oldbeat then return end
+	if beat == oldbeat then return end
 	oldbeat = beat
 
 	while eases_index <= eases.n and eases[eases_index][1] < beat do
@@ -1007,7 +1042,7 @@ function update_command(self)
 		else
 			for i = 4, e.n, 2 do
 				local mod = e[i + 1]
-				mods[plr][mod] = mods[plr][mod] + 0
+				touch_mod(mod, plr)
 			end
 			active_eases[active_eases_index] = active_eases[active_eases.n]
 			active_eases[active_eases.n] = nil
@@ -1087,11 +1122,11 @@ function update_command(self)
 	if debug_print_mod_targets then
 		if debug_print_mod_targets == true or debug_print_mod_targets < beat then
 			for pn = 1, max_pn do
-				if P[pn] and (P[pn]:IsAwake() or not FUCK_EXE) then
+				if P[pn] and P[pn]:IsAwake() then
 					local outputs = {}
 					local i = 0
 					for k, v in pairs(targets[pn]) do
-						if v ~= 0 then
+						if v ~= default_mods[k] then
 							i = i + 1
 							outputs[i] = tostring(k) .. ': ' .. tostring(v)
 						end

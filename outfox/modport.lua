@@ -34,44 +34,24 @@ return Def.Actor {
                 end
             end
         end
+			
+		local PN = {}
+		for pn = 1, 2 do
+			P[pn]:fardistz(1000 * sm_scaleW)
+			P[pn]:zoomz(sm_scaleW)
+			P[pn]:rotafterzoom(false)
 
-        alias
-        {'confusionzoffset', 'confusionoffset'}
-        {'hidenoteflashes', 'hidenoteflash'}
+			if P[pn]:GetChild('NoteField'):GetNumWrapperStates() == 0 then
+				P[pn]:GetChild('NoteField'):AddWrapperState()
+			end
+			PN[pn] = P[pn]:GetChild('NoteField'):GetWrapperState(1)
+			PN[pn]:rotafterzoom(false)
+		end
 
-        local PN = {}
-        for pn = 1, 2 do
-            P[pn]:fardistz(1000 * sm_scaleW)
-            P[pn]:zoomz(sm_scaleW)
-            P[pn]:rotafterzoom(false)
-
-            if P[pn]:GetChild('NoteField'):GetNumWrapperStates() == 0 then
-                P[pn]:GetChild('NoteField'):AddWrapperState()
-            end
-            PN[pn] = P[pn]:GetChild('NoteField'):GetWrapperState(1)
-            PN[pn]:rotafterzoom(false)
-        end
-
-        local POptions = {
-            GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
-            GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song')
-        }
-
-        alias
-        {'holdstealth', 'stealthholds'}
-        {'halgun', 'hideholdjudgments'}
-        {'centered2', 'centeredpath'}
-        {'reversetype', 'unboundedreverse'}
-        {'arrowpath', 'notepath'}
-        {'arrowpath0', 'notepath1'}
-        {'arrowpath1', 'notepath2'}
-        {'arrowpath2', 'notepath3'}
-        {'arrowpath3', 'notepath4'}
-		{'modtimer', 'modtimersong'}
-		{'longholds', 'extendholds'}
-		{'holdstealth', 'stealthholds'}
-
-        setdefault {100, 'tinyusesminicalc'}
+		local POptions = {
+			GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
+			GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song')
+		}
 
         for _, tween in ipairs {
             {'x', 1},
@@ -106,124 +86,152 @@ return Def.Actor {
             end
         end
 
-        definemod
-        {
-            'tiny',
-            function(n)
-                return n, n
-            end,
-            'tinyx', 'tinyy',
-            defer = true
-        }
-        {
-            'hide',
-            function(n, pn)
-                if PN[pn] then PN[pn]:visible(n <= 0) end
-            end,
-            defer = true
-        }
-        {
-            'hidenoteflash',
-            function(n)
-                return n, n, n, n
-            end,
-            'hidenoteflash1', 'hidenoteflash2', 'hidenoteflash3', 'hidenoteflash4',
-            defer = true
-        }
-        {
-            'holdgirth',
-            function(n)
-                return -n, -n, -n, -n
-            end,
-            'holdtinyx1', 'holdtinyx2', 'holdtinyx3', 'holdtinyx4',
-            defer = true
-        }
-        --[[ Under construction, use at your own risk
-        {
-            'mini',
-            function(n)
-                if PN[pn] then PN[pn]:zoomz(PN[pn]:GetZoomZ() * (1 / (1 - n * 0.005)))
-                return n
-            end,
-            'mini',
-            defer = true
-        }
-        ]]--
-
-        do
-            local frontratio = 410 / THEME:GetMetric('Player', 'DrawDistanceBeforeTargetsPixels')
-            local backratio = -114 / THEME:GetMetric('Player', 'DrawDistanceAfterTargetsPixels')
-
-            for _, v in ipairs{
-                {'drawsize', frontratio},
-                {'drawsizeback', backratio},
-                {'arrowpathdrawsize', frontratio, 'notepathdrawsize'},
-                {'arrowpathdrawsizeback', backratio, 'notepathdrawsizeback'}
-            } do
-                local name, distratio, ali = v[1], v[2], v[3]
-                local function scaledist(n)
-                    return (n + 100) * distratio - 100
-                end
-
-                if ali then
-                    definemod {name, scaledist, ali, defer = true}
-                else
-                    node {name, scaledist, name, defer = true}
-                end
-            end
-        end
-
-        for col = 1, 4 do
-            for _, mod in ipairs {
-                {'ConfusionXOffset', 0.01},
-                {'ConfusionYOffset', 0.01},
-                {'ConfusionZOffset', 0.01},
-				{'ConfusionOffset', 0.01}, -- Just in case?
-                {'MoveX', 0.01},
-                {'MoveY', 0.01},
-                {'MoveZ', 0.01},
-                {'NoteSkewX', 0.01},
-                {'NoteSkewY', 0.01},
-                {'Dark', 0.01},
-                {'Reverse', 0.01},
-				{'Tiny', 0.01},
-            } do
-                local modname, mul = mod[1]..col, mod[2]
-                if string.sub(mod[1], 1, 4) == 'Move' then
-                    definemod {
-                        string.lower(mod[1])..(col - 1), string.lower(mod[1]),
-                        function(m, n, pn)
-                            if POptions[pn] and POptions[pn][modname] then
-                                POptions[pn][modname](POptions[pn], (m + n) * mul, 9e9)
-                            end
-                        end,
-                        defer = true
-                    }
-                elseif string.sub(mod[1], 1, 4) == 'Tiny' then
-                    definemod {
-                        string.lower(mod[1])..(col - 1), string.lower(mod[1]),
-                        function(m, n, pn)
-                            if POptions[pn] and POptions[pn][modname..'X'] then
-                                POptions[pn][modname..'X'](POptions[pn], (m + n) * mul, 9e9)
-                            end
-                            if POptions[pn] and POptions[pn][modname..'Y'] then
-                                POptions[pn][modname..'Y'](POptions[pn], (m + n) * mul, 9e9)
-                            end
-                        end,
-                        defer = true
-                    }
-				else
-                    definemod {
-                        string.lower(mod[1])..(col - 1),
-                        function(n, pn)
-                            if POptions[pn] and POptions[pn][modname] then
-                                POptions[pn][modname](POptions[pn], n * mul, 9e9)
-                            end
-                        end,
-                        defer = true
-                    }
-                end
-            end
-        end
+		function NotITGMods(b)
+			if type(b) == 'boolean' then
+				if b == true then
+					alias
+					{'confusionzoffset', 'confusionoffset'}
+					{'hidenoteflashes', 'hidenoteflash'}
+			
+					alias
+					{'holdstealth', 'stealthholds'}
+					{'halgun', 'hideholdjudgments'}
+					{'centered2', 'centeredpath'}
+					{'reversetype', 'unboundedreverse'}
+					{'arrowpath', 'notepath'}
+					{'arrowpath0', 'notepath1'}
+					{'arrowpath1', 'notepath2'}
+					{'arrowpath2', 'notepath3'}
+					{'arrowpath3', 'notepath4'}
+					{'modtimer', 'modtimersong'}
+					{'longholds', 'extendholds'}
+					{'holdstealth', 'stealthholds'}
+			
+					setdefault {100, 'tinyusesminicalc'}
+			
+					definemod
+					{
+						'tiny',
+						function(n)
+							return n, n
+						end,
+						'tinyx', 'tinyy',
+						defer = true
+					}
+					{
+						'hide',
+						function(n, pn)
+							if PN[pn] then PN[pn]:visible(n <= 0) end
+						end,
+						defer = true
+					}
+					{
+						'hidenoteflash',
+						function(n)
+							return n, n, n, n
+						end,
+						'hidenoteflash1', 'hidenoteflash2', 'hidenoteflash3', 'hidenoteflash4',
+						defer = true
+					}
+					{
+						'holdgirth',
+						function(n)
+							return -n, -n, -n, -n
+						end,
+						'holdtinyx1', 'holdtinyx2', 'holdtinyx3', 'holdtinyx4',
+						defer = true
+					}
+					--[[ Under construction, use at your own risk
+					{
+						'mini',
+						function(n)
+							if PN[pn] then PN[pn]:zoomz(PN[pn]:GetZoomZ() * (1 / (1 - n * 0.005)))
+							return n
+						end,
+						'mini',
+						defer = true
+					}
+					]]--
+			
+					do
+						local frontratio = 410 / THEME:GetMetric('Player', 'DrawDistanceBeforeTargetsPixels')
+						local backratio = -114 / THEME:GetMetric('Player', 'DrawDistanceAfterTargetsPixels')
+			
+						for _, v in ipairs{
+							{'drawsize', frontratio},
+							{'drawsizeback', backratio},
+							{'arrowpathdrawsize', frontratio, 'notepathdrawsize'},
+							{'arrowpathdrawsizeback', backratio, 'notepathdrawsizeback'}
+						} do
+							local name, distratio, ali = v[1], v[2], v[3]
+							local function scaledist(n)
+								return (n + 100) * distratio - 100
+							end
+			
+							if ali then
+								definemod {name, scaledist, ali, defer = true}
+							else
+								node {name, scaledist, name, defer = true}
+							end
+						end
+					end
+			
+					for col = 1, 4 do
+						for _, mod in ipairs {
+							{'ConfusionXOffset', 0.01},
+							{'ConfusionYOffset', 0.01},
+							{'ConfusionZOffset', 0.01},
+							{'ConfusionOffset', 0.01}, -- Just in case?
+							{'MoveX', 0.01},
+							{'MoveY', 0.01},
+							{'MoveZ', 0.01},
+							{'NoteSkewX', 0.01},
+							{'NoteSkewY', 0.01},
+							{'Dark', 0.01},
+							{'Reverse', 0.01},
+							{'Tiny', 0.01},
+						} do
+							local modname, mul = mod[1]..col, mod[2]
+							if string.sub(mod[1], 1, 4) == 'Move' then
+								definemod {
+									string.lower(mod[1])..(col - 1), string.lower(mod[1]),
+									function(m, n, pn)
+										if POptions[pn] and POptions[pn][modname] then
+											POptions[pn][modname](POptions[pn], (m + n) * mul, 9e9)
+										end
+									end,
+									defer = true
+								}
+							elseif string.sub(mod[1], 1, 4) == 'Tiny' then
+								definemod {
+									string.lower(mod[1])..(col - 1), string.lower(mod[1]),
+									function(m, n, pn)
+										if POptions[pn] and POptions[pn][modname..'X'] then
+											POptions[pn][modname..'X'](POptions[pn], (m + n) * mul, 9e9)
+										end
+										if POptions[pn] and POptions[pn][modname..'Y'] then
+											POptions[pn][modname..'Y'](POptions[pn], (m + n) * mul, 9e9)
+										end
+									end,
+									defer = true
+								}
+							else
+								definemod {
+									string.lower(mod[1])..(col - 1),
+									function(n, pn)
+										if POptions[pn] and POptions[pn][modname] then
+											POptions[pn][modname](POptions[pn], n * mul, 9e9)
+										end
+									end,
+									defer = true
+								}
+							end
+						end
+					end
+				end
+			else
+				lua.ReportScriptError('NotITGMods: expected boolean for value '..tostring(b)..' (a '..type(b)..' value)')
+			end
+		end
     end
 }

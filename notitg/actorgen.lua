@@ -1,5 +1,5 @@
 -- If you edit template.xml, reflect the change here
-local nodesPerAF = 100
+local nodesPerAF = 1000
 local templatepath = "../notitg/actors.xml"
 
 -- End of config
