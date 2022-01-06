@@ -11,7 +11,13 @@ return Def.ActorFrame {
             PP[pn]:SetTarget(P[pn])
             P[pn]:hidden(1)
         end
-        -- funy arow wigles go here
+
+		NotITGMods(true)
+		setdefault {
+			1.5, 'xmod',
+			100, 'modtimer'
+		}
+
     end,
     -- funy scren budies go here
     Def.ActorProxy { Name = 'PP[1]' },

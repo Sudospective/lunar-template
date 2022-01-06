@@ -11,6 +11,8 @@ Special Thanks:
 
 xero()
 
+function NotITGMods(b) end
+
 return Def.Actor {
     LoadCommand = function(self)
         bw, bh = 640, 480

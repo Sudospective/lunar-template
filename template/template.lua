@@ -949,6 +949,35 @@ function begin_update_command(self)
 		xero['P' .. pn] = player
 		P[pn] = player
 	end
+	
+
+	function AllowMeta()
+		if not FUCK_EXE then
+			for i, v in ipairs {
+				GAMESTATE:GetPlayerState(0),
+				GAMESTATE:GetPlayerState(1),
+			} do
+				for _, mod in ipairs(v:GetPlayerOptionsArray('ModsLevel_Stage')) do
+					local popts = v:GetPlayerOptions('ModsLevel_Stage')
+					if popts then
+						if mod:find('%dx') then
+							node {'xmod', function(p, pn)
+								local pop = GAMESTATE:GetPlayerState(pn - 1):GetPlayerOptions('ModsLevel_Stage')
+								print(p * pop:XMod())
+								return p * pop:XMod()
+							end, 'xmod', defer = true}
+						elseif popts[mod] and type(popts[mod](popts)) == 'number' then
+							node {mod:lower(), function(p, pn)
+								local pop = GAMESTATE:GetPlayerState(pn - 1):GetPlayerOptions('ModsLevel_Stage')
+								return p + pop[mod](pop) * 100
+							end, mod:lower(), defer = true}
+							setdefault {0, mod:lower()}
+						end
+					end
+				end
+			end
+		end
+	end
 
 	foreground:playcommand('Load')
 
