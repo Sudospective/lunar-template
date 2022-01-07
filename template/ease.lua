@@ -88,7 +88,7 @@ end, 0.9)
 
 function instant() return 1 end
 
-if FUCK_EXE then
+if IsNITG() then
 
 	function linear(t) return t end
 	function inSine(x) return 1 - cos(x * (pi * 0.5)) end

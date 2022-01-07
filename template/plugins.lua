@@ -2,7 +2,7 @@ xero()
 local path_to_plugins = 'plugins/'
 local af = Def.ActorFrame {}
 local filestruct
-if FUCK_EXE then
+if IsNITG() then
     filestruct = {GAMESTATE:GetFileStructure(songdir..path_to_plugins)}
 else
     filestruct = FILEMAN:GetDirListing(songdir..path_to_plugins)

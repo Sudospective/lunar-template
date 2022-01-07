@@ -1,26 +1,72 @@
+xero()
+
+
 local POptions = {}
 local ApplyModifiers
-if not FUCK_EXE then
+if not IsNITG() then
 	POptions = {
 		GAMESTATE:GetPlayerState(0):GetPlayerOptions('ModsLevel_Song'),
 		GAMESTATE:GetPlayerState(1):GetPlayerOptions('ModsLevel_Song'),
 	}
 	ApplyModifiers = function(str, pn)
 		if pn then
+			print(tostring(POptions[pn])..' ('..pn..'): '..str)
 			POptions[pn]:FromString(str)
 		else
-			POptions[1]:FromString(str)
-			POptions[2]:FromString(str)
+			for pn = 1, #POptions do
+				POptions[pn]:FromString(str)
+			end
 		end
 	end
 end
 --template.xml
 
-xero()
-
-if FUCK_EXE then max_pn = 8 else max_pn = 2 end -- default: `8`
+--if IsNITG() then max_pn = 8 else max_pn = 2 end -- default: `8`
+max_pn = 8 -- Def.NoteField bayBEEEE
 local debug_print_applymodifier_input = false -- default: `false`
 local debug_print_mod_targets = false -- default: `false`
+
+local function metric(str)
+	return tonumber(THEME:GetMetric('Player', str))
+end
+
+local extraplrs = {}
+if not IsNITG() then
+	for pn = 3, max_pn do
+		extraplrs[#extraplrs + 1] = Def.ActorFrame {
+			Name = 'PlayerP'..pn,
+			FOV = 45,
+			InitCommand = function(self)
+				function self:SetAwake(b)
+					self:GetChild('NoteField'):visible(b)
+				end
+				self
+					:Center()
+					:basezoom(sh / 480)
+					:visible(false)
+					:aux(pn)
+			end,
+			Def.NoteField {
+				Name = 'NoteField',
+				Player = PlayerNumber[math.mod(pn - 1, 2) + 1],
+				NoteSkin = GAMESTATE:GetPlayerState(math.mod(pn - 1, 2)):GetPlayerOptions('ModsLevel_Song'):NoteSkin(),
+				DrawDistanceAfterTargetsPixels = metric 'DrawDistanceAfterTargetsPixels',
+				DrawDistanceBeforeTargetsPixels = metric 'DrawDistanceBeforeTargetsPixels',
+				YReverseOffsetPixels = metric 'ReceptorArrowsYReverse' - metric 'ReceptorArrowsYStandard',
+				FieldID = pn,
+				InitCommand = function(self)
+					local nfmid = (metric 'ReceptorArrowsYStandard' + metric 'ReceptorArrowsYReverse') * 0.5
+					self
+						:y(nfmid)
+						:visible(false)
+					POptions[#POptions + 1] = self:GetPlayerOptions('ModsLevel_Current')
+				end,
+			}
+		}
+	end
+end
+
+function NotITGMods(b) end
 
 function copy(src)
 	local dest = {}
@@ -67,7 +113,7 @@ e = 'end'
 plr = {1, 2}
 
 function sprite(self)
-	if FUCK_EXE then
+	if IsNITG() then
 		self:basezoomx(sw / dw)
 		self:basezoomy(-sh / dh)
 		self:xy(scx, scy)
@@ -82,7 +128,7 @@ function spritepixel(self, scale)
 end
 
 function aft(self)
-	if FUCK_EXE	then
+	if IsNITG()	then
 		self:SetWidth(dw)
 		self:SetHeight(dh)
 		self:EnableFloat(false)
@@ -125,7 +171,7 @@ function aftsprite(aft, sprite)
 end
 
 function pivot(self)
-	if FUCK_EXE then
+	if IsNITG() then
 		self:x2(scx)
 		self:y2(scy)
 	else
@@ -141,12 +187,10 @@ end
 
 function setupJudgeProxy(proxy, target, pn)
 	proxy:SetTarget(target)
-	if FUCK_EXE then
-		proxy:xy(scx * (pn-.5), scy)
+	proxy:xy(scx * (pn-.5), scy)
+	if IsNITG() then
 		target:hidden(1)
 	else
-		proxy:x(scx * (pn-.5))
-		proxy:y(scy)
 		target:visible(false)
 	end
 	target:sleep(9e9)
@@ -736,7 +780,7 @@ local function scan_named_actors()
 	local function sweep(actor, skip)
 		if actor.GetNumChildren then
 			for i = 0, actor:GetNumChildren() - 1 do
-				sweep(actor:GetChildAt(i + ((FUCK_EXE and 0) or 1)))
+				sweep(actor:GetChildAt(i + ((IsNITG() and 0) or 1)))
 			end
 		end
 		if skip then
@@ -777,7 +821,7 @@ local function scan_named_actors()
 end
 
 -- make zoom and move nodes NotITG-only - kino
-if FUCK_EXE then
+if IsNITG() then
 	-- zoom
 	aux 'zoom'
 	node {
@@ -872,7 +916,7 @@ local active_funcs = perframe_data_structure(function(a, b)
 	return x * x * y < x * y * y
 end)
 
-if FUCK_EXE then
+if IsNITG() then
 	GAMESTATE:ApplyModifiers('clearall,*0 0x,*-1 overhead')
 else
 	ApplyModifiers('clearall,*0 0x,*-1 overhead')
@@ -880,7 +924,7 @@ end
 -- default eases
 
 local function apply_modifiers(str, pn)
-	if FUCK_EXE then
+	if IsNITG() then
 		GAMESTATE:ApplyModifiers(str, pn)
 	else
 		ApplyModifiers(str, pn)
@@ -938,7 +982,7 @@ function begin_update_command(self)
 	} do
 		local child = SCREENMAN:GetTopScreen():GetChild(element)
 		if child then
-			if FUCK_EXE then child:hidden(1) else child:visible(false) end
+			if IsNITG() then child:hidden(1) else child:visible(false) end
 		end
 
 	end
@@ -946,13 +990,16 @@ function begin_update_command(self)
 	P = {}
 	for pn = 1, max_pn do
 		local player = SCREENMAN:GetTopScreen():GetChild('PlayerP' .. pn)
+		if not player and not IsNITG() then
+			player = self:GetChild('PlayerP'..pn)
+		end
 		xero['P' .. pn] = player
 		P[pn] = player
 	end
 	
 
 	function AllowMeta()
-		if not FUCK_EXE then
+		if not IsNITG() then
 			for i, v in ipairs {
 				GAMESTATE:GetPlayerState(0),
 				GAMESTATE:GetPlayerState(1),
@@ -1015,7 +1062,7 @@ function begin_update_command(self)
 	-- For some God-forsaken reason, we get more performance not by removing work,
 	-- but adding more work at the beginning. This is probably the most confusing
 	-- thing I've encountered in modfile coding to date. ~Sudo
-	if not FUCK_EXE then
+	if not IsNITG() then
 		for mod in pairs(default_mods) do
 			touch_mod(mod)
 		end
@@ -1108,7 +1155,7 @@ function update_command(self)
 	end
 
 	for pn = 1, max_pn do
-		if P[pn] and (not FUCK_EXE or P[pn]:IsAwake()) then
+		if P[pn] and (not IsNITG() or P[pn]:IsAwake()) then
 			if not last_seen_awake[pn] then
 				last_seen_awake[pn] = true
 				for mod, percent in pairs(touched_mods[pn]) do
@@ -1151,7 +1198,7 @@ function update_command(self)
 	if debug_print_mod_targets then
 		if debug_print_mod_targets == true or debug_print_mod_targets < beat then
 			for pn = 1, max_pn do
-				if P[pn] and P[pn]:IsAwake() then
+				if P[pn] and (not IsNITG() or P[pn]:IsAwake()) then
 					local outputs = {}
 					local i = 0
 					for k, v in pairs(targets[pn]) do
@@ -1167,8 +1214,13 @@ function update_command(self)
 		end
 	end
 end
+
+
 return Def.ActorFrame {
+	InitCommand = function(self)
+	end,
 	OnCommand = xero.on_command,
 	BeginUpdateCommand = xero.begin_update_command,
 	UpdateCommand = xero.update_command,
+	(not IsNITG() and table.unpack(extraplrs))
 }

@@ -11,17 +11,15 @@ Special Thanks:
 
 xero()
 
-function NotITGMods(b) end
-
 return Def.Actor {
     LoadCommand = function(self)
         bw, bh = 640, 480
         sm_scaleW, sm_scaleH = sw / bw, sh / bh
         sm_scaleR = sm_scaleW / sm_scaleH
-        sm_fix = (FUCK_EXE and 0) or 1
+        sm_fix = (IsNITG() and 0) or 1
 
         function CorrectZDist(actor)
-            if not FUCK_EXE and actor and actor.GetNumChildren then
+            if not IsNITG() and actor and actor.GetNumChildren then
                 actor:fardistz(1000 * sm_scaleW)
                 for an = 0, actor:GetNumChildren() - 1 do
                     CorrectZDist(actor:GetChildAt(an))
@@ -29,7 +27,7 @@ return Def.Actor {
             end
         end
         function CorrectFOV(actor, fov)
-            if not FUCK_EXE and actor and actor.GetNumChildren then
+            if not IsNITG() and actor and actor.GetNumChildren then
                 actor:fov(fov)
                 for an = 0, actor:GetNumChildren() - 1 do
                     CorrectFOV(actor:GetChildAt(an), fov)

@@ -24,6 +24,10 @@ end
 
 xero()
 
+function IsNITG()
+	return FUCK_EXE and true or false
+end
+
 local function insertion_sort(t, l, h, c)
 	for i = l + 1, h do
 		local k = l
@@ -187,7 +191,7 @@ local stringbuilder_mt =  {
 function stringbuilder()
 	return setmetatable({}, stringbuilder_mt)
 end
-if FUCK_EXE then
+if IsNITG() then
 	return true
 else
 	return Def.Actor {}

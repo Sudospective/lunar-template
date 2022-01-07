@@ -1,6 +1,6 @@
 xero()
-yes = (FUCK_EXE and 1) or true
-no = (FUCK_EXE and 0) or false
+yes = (IsNITG() and 1) or true
+no = (IsNITG() and 0) or false
 
 function hide(a)
     a:visible(no)
@@ -10,17 +10,17 @@ function show(a)
 end
 
 Blend = {
-    Normal = (FUCK_EXE and 'normal') or 'BlendMode_Normal',
-    Add = (FUCK_EXE and 'add') or 'BlendMode_Add',
-    WeightedAdd = (FUCK_EXE and 'weightedadd') or 'BlendMode_WeightedAdd',
-    Subtract = (FUCK_EXE and 'subtract') or 'BlendMode_Subtract',
-    Multiply = (FUCK_EXE and 'multiply') or 'BlendMode_Multiply',
-    WeightedMultiply = (FUCK_EXE and 'weightedmultiply') or 'BlendMode_WeightedMultiply',
-    InvertDest = (FUCK_EXE and 'invertdest') or 'BlendMode_InvertDest',
-    NoEffect = (FUCK_EXE and 'noeffect') or 'BlendMode_NoEffect',
-    CopySrc = (FUCK_EXE and 'copysrc') or 'BlendMode_CopySrc',
+    Normal = (IsNITG() and 'normal') or 'BlendMode_Normal',
+    Add = (IsNITG() and 'add') or 'BlendMode_Add',
+    WeightedAdd = (IsNITG() and 'weightedadd') or 'BlendMode_WeightedAdd',
+    Subtract = (IsNITG() and 'subtract') or 'BlendMode_Subtract',
+    Multiply = (IsNITG() and 'multiply') or 'BlendMode_Multiply',
+    WeightedMultiply = (IsNITG() and 'weightedmultiply') or 'BlendMode_WeightedMultiply',
+    InvertDest = (IsNITG() and 'invertdest') or 'BlendMode_InvertDest',
+    NoEffect = (IsNITG() and 'noeffect') or 'BlendMode_NoEffect',
+    CopySrc = (IsNITG() and 'copysrc') or 'BlendMode_CopySrc',
 }
 ZTestMode = {
-    Pass = (FUCK_EXE and 'writeonpass') or 'ZTestMode_WriteOnPass',
-    Fail = (FUCK_EXE and 'writeonfail') or 'ZTestMode_WriteOnFail',
+    Pass = (IsNITG() and 'writeonpass') or 'ZTestMode_WriteOnPass',
+    Fail = (IsNITG() and 'writeonfail') or 'ZTestMode_WriteOnFail',
 }
