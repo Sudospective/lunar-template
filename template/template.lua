@@ -1222,5 +1222,5 @@ return Def.ActorFrame {
 	OnCommand = xero.on_command,
 	BeginUpdateCommand = xero.begin_update_command,
 	UpdateCommand = xero.update_command,
-	(not IsNITG() and table.unpack(extraplrs))
+	(not IsNITG() and table.unpack(extraplrs)) or nil
 }
