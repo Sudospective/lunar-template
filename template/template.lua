@@ -1217,8 +1217,6 @@ end
 
 
 return Def.ActorFrame {
-	InitCommand = function(self)
-	end,
 	OnCommand = xero.on_command,
 	BeginUpdateCommand = xero.begin_update_command,
 	UpdateCommand = xero.update_command,
