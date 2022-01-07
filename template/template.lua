@@ -1059,14 +1059,6 @@ function begin_update_command(self)
 
 	self:luaeffect('Update')
 	
-	-- For some God-forsaken reason, we get more performance not by removing work,
-	-- but adding more work at the beginning. This is probably the most confusing
-	-- thing I've encountered in modfile coding to date. ~Sudo
-	if not IsNITG() then
-		for mod in pairs(default_mods) do
-			touch_mod(mod)
-		end
-	end
 end
 
 local oldbeat = 0
