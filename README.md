@@ -153,7 +153,7 @@ The Lunar Template is designed to fit and streamline your style.
 ---
 
 ## Known Issues
-- Extra players are not supported for SM5 (halted for OutFox)
+- ~~Extra players are not supported for SM5 (halted for OutFox)~~ Supported in OutFox! Have fun <3
 - AFTs are not perfectly portable (needs significant effort to fix)
 
 ---
