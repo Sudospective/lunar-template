@@ -118,7 +118,7 @@ function sprite(self)
 		self:basezoomy(-sh / dh)
 		self:xy(scx, scy)
 	else
-		self:Center()
+		self:Center():basezoom(sh / dh)
 	end
 end
 
@@ -131,14 +131,12 @@ function aft(self)
 	if IsNITG()	then
 		self:SetWidth(dw)
 		self:SetHeight(dh)
-		self:EnableFloat(false)
 		self:EnableDepthBuffer(false)
 		self:EnableAlphaBuffer(false)
 		self:EnablePreserveTexture(true)
 	else
 		self:SetWidth(sw)
 		self:SetHeight(sh)
-		self:EnableFloat(false)
 		self:EnableDepthBuffer(true)
 		self:EnableAlphaBuffer(true)
 		self:EnablePreserveTexture(false)
