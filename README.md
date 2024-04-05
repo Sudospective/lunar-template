@@ -154,12 +154,12 @@ The Lunar Template is designed to fit and streamline your style.
 
 ## Known Issues
 - ~~Extra players are not supported for SM5 (halted for OutFox)~~ Supported in OutFox! Have fun <3
-- AFTs are not perfectly portable (needs significant effort to fix)
+- ~~AFTs are not perfectly portable (needs significant effort to fix)~~ Use Def.ActorScreenTexture!
 
 ---
 
 ## To-Do
-1. Look into possible ways to port AFTs 1:1
+1. ~~Look into possible ways to port AFTs 1:1~~ Done!
 
 ---
 ## Huge Warm Hugs to These People
