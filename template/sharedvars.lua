@@ -20,7 +20,7 @@ Blend = {
     NoEffect = (IsNITG() and 'noeffect') or 'BlendMode_NoEffect',
     CopySrc = (IsNITG() and 'copysrc') or 'BlendMode_CopySrc',
 }
-ZTestMode = {
+ZTest = {
     Pass = (IsNITG() and 'writeonpass') or 'ZTestMode_WriteOnPass',
     Fail = (IsNITG() and 'writeonfail') or 'ZTestMode_WriteOnFail',
 }
