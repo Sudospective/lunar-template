@@ -34,33 +34,33 @@ Def.Quad {
     OnCommand = function(self) self:zoom(64) end
 },
 -- make an actorframe with children
-Def.ActorProxy {
-    Name = 'ActorFrame',
+Def.ActorFrame {
+    Name = 'myActorFrame',
     Def.ActorProxy {
-        Name = 'ActorProxy',
+        Name = 'myActorProxy',
         OnCommand = function(self)
             self:SetTarget(myActor)
         end
     },
-    Def.Sprite { Name = 'Sprite', Texture = 'myTexture.png' }
+    Def.Sprite { Name = 'mySprite', Texture = 'myTexture.png' }
 }
 ```
 
 #### Recursive Actors
 ```lua
 xero() -- outside the main actorframe
--- make an empty actorframe called myActor
-local recursive_quads = Def.ActorFrame { Name = "myActor" }
+-- make an empty actorframe called myQuads
+local quads = Def.ActorFrame { Name = "myQuads" }
 -- for-loop and add 10 quads
 for i = 1, 10 do
-    t[#t + 1] = Def.Quad { Name = "Quad" .. i }
+    quads[#quads + 1] = Def.Quad { Name = "myQuad" .. i }
 end
 return Def.ActorFrame {
     LoadCommand = function(self)
     ... -- Mods
     end,
     -- add it as a child to main actorframe
-    recursive_quads,
+    quads,
     -- other actors
     Def.ActorProxy { Name = 'PP[1]' },
     Def.ActorProxy { Name = 'PP[2]' },
